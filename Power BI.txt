@@ -1,0 +1,89 @@
+Power BI - It is a Business Intelligence tool which helps the End Users to get meaningful insigts of the data
+
+It has 4 components :
+1. Power Query - Used for ETL, Cleaning of the data before loading or after loading as well
+2. Power Pivot - Used for Modelling and Building relationships between different tables
+3. Power View - Used for creating visualizations and Dashboards
+4. Power BI Service - Used to publish and share the report with teams or different Users
+
+Charts :
+1. Column Chart - A Column Chart is a chart where data is presented vertically. (If you don't pass legend it will be a simple column chart)
+		  It is a chart where the data is represented based on a particular factor
+		  For Ex : If you pass Categories in the Axis and Sales in the Values
+			   Then it shows the Sales Amount per Category - It shows how much Sales has happened for each Category
+2. Stacked Column Chart - A Stacked Column chart is something where we show the data with divisions on some parameter based on a particular factor (Legend
+		  is passed in order to make it a Stacked Column Chart)
+		  For Ex : If you pass Categories in the Axis, Sales in the Values and Geography in the legend
+			   Then it shows the Sales Amount per Category and shows the division of the Geography in the column itself
+			   How much Sales has happened in different Regions for each Category
+3. Pie Chart - It is a chart which is basically used to showcase part to whole relationship. It is usually good practice to show disctribution for 
+	       a factor which has less than 6 - 7 items.
+	       For Ex : If you pass Geography to the Legend and Sales in the Value, then it will show Sales Distribution across all geographies
+4. Doughnut Chart - It is a chart which is also used to showcase part to whole relationship but here you get a hole in the middle and thus instead of 
+		    slices you will be showing an arc representing the value. If you have less elements to show then Doughnut charts can be used but 
+		    if you have relatively more elements then it is better to go for a Pie chart
+5. Funnel Chart - It is a chart which is used to show the filtered data in different stages
+		  For Ex : The Hiring process. Here you can show how many of the Candidates applied for the exam, how many appeared, how many cleared,
+			   how many candidates hired. So the data will be represented as if it is flowing though a funnel filtered through different stages
+6. Ribbon Chart - It is a chart which is used to display highest rank category over a period of time. The highest rank category always stays at the top
+		  and the other Categories takes the position depending on the rank in each time period.
+		  NOTE : For Ribbon Charts, it is mandatory to pass the legend based on which the ribbon is created. If it is not passed then it becomes
+			 a simple column chart
+7. Map - It is used to show a geographical location and for that the Data Category of the field has to be appropriate. It has to be either Address, City, 
+	 State or Province, Country, Postal code, Latitude, Longitude etc.
+8. Filled Map - It is also used to show a geographical location filled with colours to separate the other locations.
+9. Map with Pie Chart - It is just a plain Map where the bubbles turns into a Pie if the Category dropped in the legend has values spread across all
+			Geographies. It is a default behaviour which exists in the Map itself. This type of information cannot be shown using Filled Maps.
+			NOTE : The distribution in the Pie will be equal in every geo since the measure is not given in the visual yet. Once you drop a 
+			       measure say - "Sales" into Size, then you will see the slices appropriately. It creates the Pie based on the Sale Value
+			       in different regions.
+10. Table - Table is a visual where you can show data in a tabular format. This visual doesnot have anything other than Values and so whatever you drag and
+	    drop into Values will be shown in the table. Sorting can be done from the elipses button of the Visual itself.
+11. Matrix - Matrix is a visual which is used to show data in 2 dimentional format. For ex - Lets say we have many sub-categories and the sales for all of
+	     those sub-categories are given for 4 diferent regions. If you try to present this kind of data in Table, then each sub-category will repeat 4
+	     times because of the 4 regions for each sub-category and hense Matrix comes into picture which will help to represent the data in a much
+	     better way. In Matrix we have 3 Fields - Row, Column & Values.
+12. Line Chart - Line chart is a simple chart which is used to show the trend or progress over time. Whatever you throw in the Axis will come in the X-Axis
+		 and whatever you throw in the Value will come in Y-Axis and the line is shown to present the trend
+13. Area Chart - Area Chart is very similar to Line Chart. It highlights the area under the line to give insights saying how much area is covered by a
+		 particular legend value.
+14. Line VS Column Chart - There are two types of this type of combo Chart : (This type of chart has SharedAxis, ColumnValues, LineValues and ColumnSeries)
+			   This type of chart takes two measures and can be analysed by two different dimentions. Here we get a secondary axis for the line
+			   1> Line VS Clustered Cloumn - Once you drop a legend in the ColumnSeries, you will see that the each column has been splitted
+							 into multiple Sub-Columns and you can analyse for a particular year
+			   2> Line VS Stacked Column - Here we compare between the years
+15. Scatter Plot - It is the only default visual which has an animation property in it. There are other charts as well which has animations but they are
+		   not included by default. It is used to see the distribution. 2 measures are mandatorily required in order to use this chart. Now, you
+		   just have to drop a dimention in the details field in order to see the distribution of that dimention. There is a field called Size 
+		   which can be used to see the volume as it increases or decreases the size based on the distribution. Finally it also has a Play Axis
+		   where basically you want to drop a date field so that it can show the change in distribution with time. There is a legend field as well
+		   to categorize the data that you want to see in the distribution. Once you have dropped a date, you can select one of the items and see
+		   the trend as well. A line is drawn for the selected items, to show the trend
+
+Formating - We can do formatting in each and every visual by going inside the Format menu (looks like a paint brush)
+
+Include & Exclude - It is used to filter the values visually from the screen and compare the sales between two different categories. This gets added into
+		    the Filters pane so it is basically like adding visual level filter from the Filters pane.
+
+View Data & Export - It is a functionality of Power BI where we can filter a visual and the details of the filtered part can be seen record by record. We 
+		     don't have to filter it manually as we do it in excel. And that filtered data is then can be export very easily by clicking at end 
+		     (...) button. Once you click the button you will get option to export the detials in a CSV. This permission to allow the end user to
+		     export the filtered data can be selected from the Report setting under CURRENT FILE
+
+Conditional Formatting - Conditional Formatting is a Feature present in the Table & Matrix Chart using which we can do Formatting based on a certain
+			 condition. The Backgroud or Foreground Colour will change based on the Values, we can add icons and also Bars based on values.
+			 We can also set custom rules as per our requirement and format the table accordingly.
+
+Aggregations - Whenever we drop a numeric column in the field of a table, by default it shows the summation values (it is aggregated by default with sum)
+	       We can change the aggregation by just right clicking on the numeric field from the field list and choose the desired aggregation. We can 
+	       also show the values in percentage
+
+Hirearchies - These are levels that are dependent on each other in someway and can be drilled down to see the details for each and every level. In Power BI
+	      whenever you drop a date field it takes the date as a Hirearchy by default (you can change it back to original date format as well) and for
+	      other fields you just have to drag and drop the field over the field for which you want to create the Hirearchy. These are easily created in
+	      Matrix. If you drop more than one field in the Row or Column, it takes it as Hirearchy and so there can be levels created in both Row & Column
+	      end in the Matrix and then if you want to drill down and go into the next level you have to select which way you want to drill first because
+	      expansion of the levels is only possible in one way so it has to be either in the Row side or the Column side
+
+Totals & Sub-Totals - In Matrix, it is very easy to turn on & off the Totals and Sub-Totals part because those are present as an option under the Format
+		      section itself. We can change the colour size and other things from the same option.

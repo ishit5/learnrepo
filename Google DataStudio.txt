@@ -1,0 +1,91 @@
+Google DataStudio is a free BI tool which helps to create interactive reports and dashboards for the end user
+
+Limitations of Google Data Studio :
+1. Limited support to join data - Only supports Left join and supports join with only 4 data sources
+2. Limited configuration of charts
+3. Limited auto refresh of data
+4. Data in public domain - Have to be very careful since it is very easy to leak the data to the public
+5. Limited functioning of the filters
+
+To connect to Data Source - Click on Create -> Data Source (Here you will get a lot of data sources to connect to and also many 3rd party tools)
+
+Themes and Layout - A pre-defined theme and report level layout setting can be done
+
+Text and Images :
+Text can be inserted and they can also be hyperlinked to a different page or a different report altogether
+Images can be uploaded to the report either from your local or you can provide a link for the image
+
+Bullet Charts :
+This is a special type of chart, where you need to show if the target is achieved or not
+Here the thing to note is the ranges and the target that you want to show in the chart has to be provided manually
+
+Data Sources :
+Multiple data sources can be connected to one report
+You can see and manage all your data sources from Resource option and from there one needs to select "Manage added data sources"
+You will also get a separate "Data sources" tab when in Data Studio home page. You will be able to see all the data sources used
+
+Blending Data Sources :
+Blending means joining multiple data sources together on the basis of a common column
+Blending multiple data sources is possible in Data Studio but you can have maximum of 5 sources joined together
+Also a point to note here is that all the joining that you do in Data Studio are all Left joined
+
+Scheduling Data Refresh :
+This can be done by editing an existing Data Source and then selecting the desired refresh rate
+The fastest that Data Studio allows is refresh rate of 1 min
+Data Studio only pulls the refreshed data only if there is a change in the Source and this is done to prevent additional costing
+
+Sharing Reports/Dashboards & Data Sources :
+Both Report and Data Source can be shared independently
+You can give view or edit access while sharing and this will determine the scope of things that can be done by the one with which it is shared
+You can also restrict sharing the reports further who has been given edit access and you can also disable downloading, printing and copying for viewers
+
+Running Calculations :
+Running calculations can be easily done in Data Studio since it has a separate option that you get when you edit the metric
+You can do - Running Sum, Running Max, Running Min, Running Count, Runing Average, Running Delta
+** Running Delta : It is nothing but the amount increased or decreased from the previous value
+
+Comparision Calculations :
+Similar to running calculations, we also have comparision calculations which you can get by editing the metric
+It has two options : Either you can compare relative to corresponding data or relative to base data
+
+Page Settings :
+You can have one or multiple pages under a report and there are few page level setting that can be done
+There is entirely a separate option present for managing pages
+
+Versioning :
+Data Studio keeps versioning of the reports by default
+Additionally, you can also give a name to the current as well as older versions of the report
+You can check all the versions at once and you can make an older version as current version and start working on that as well
+The option for versioning can be found in the File option
+
+Shapes :
+
+
+Filters and Pre-Defined Filters :
+
+
+Fields & Parameters :
+
+
+Segments :
+
+
+Grouping & UnGrouping :
+
+
+Interactivity between Charts :
+
+
+Dynamic Calculations like YTD, QTD, MTD using Date Range Filter :
+
+
+Dimention value colours :
+
+
+Report URL Parameters :
+
+
+Community Visualizations :
+
+
+

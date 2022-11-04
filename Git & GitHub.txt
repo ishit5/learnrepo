@@ -1,0 +1,204 @@
+* Git - It is a software that allows you to track changes over time. It is a source control or version control which allows you to see progress over time.
+It allows you to distribute the file changes over time. Also prevents from data loss/damage by creating backup snapshots. It also manages complex project
+structures.
+
+
+* GitHub - It is an application allowing you to store remote repositories. You can interact with your repositories through pull/push system on your local 
+machine. It allows multiple people to see and interact with the repository.
+
+
+* Terminal basic commands :
+cd ~ - comes to the root folder
+cd .. - comes one folder back
+cd <folder_name> - moves inside the folder specified
+ls - list all files and folder that are present in the current directory
+mkdir <folder_name> - to make a new directory with the specified name
+rm -rf <folder_name> - removes the mentioned directory and all other directories inside it
+touch <file_name_with_extension> - creates a file with the specified name in the current directory
+rm <file_name_with_extension> - removes the mentioned file from the current directory (rm removes the file but flag -rf can be used to remove the folder)
+
+
+* Workflow Terminologies :
+Repositories are also called Repos, store the full history and source control of a project
+They can either be hosted locally or on a shared server such as GitHub
+Most repositories are stored on GitHub while core contributors make copies of the repos in the local machine and update the repo using pull/push method
+Any repo which is stored somewhere but not in local, is called as remote repository and the one that is stored in local is called as local repository
+Directories or Working Directory is usually referred to the project in current state of time
+
+
+* Actual Workflow :
+Working Directory -> (pull request) -> Code in local directory (Make Changes) -> Add/Remove Files from Staging Area <--> Staging Area -> Commit -> Push
+Changes to the Working Directory
+
+
+* Creating a new repository :
+Untill and unless you initialize the git folder (meaning you tell git that this is my git repository), you cannot use any git command and if you use, it 
+will not recognize if it is not initialized. The command to initialize : git init
+
+
+* Adding and Removing Files from Staging Area :
+To see what is there in Staging Area, the command to use is : git status
+To add a file in the Staging Area, the command to use is : git add <file-name-with-extension>
+To add multiple files together at once in the Staging Area, the command to use is : git add .
+** NOTE : If you delete the files manually from the folder and then check the status of the Staging Area, it will still show all files but will also show
+the deleted files. In order to confirm you again have to do git add . so that it reflects the same in the terminal
+To remove a file from the Staging Area that you don't want to track, the command to use is : git rm --cached <file-name-with-extension>
+To remove a file completely from the repository (force remove), the command to use is : git rm -f <file-name-with-extension>
+
+
+* Commit :
+In order to commit, git needs to configure user email and name so that it can track the change by the person who has done it
+So, before configuring - if you are using "git commit", it is going to ask you your email and name
+The commands to configure email and name are given below : (NOTE : If you have not configured, git will give you the command for setting up configuration)
+git config --global user.email "<your_email_id>"
+git config --global user.name "<your_name>"
+
+If you want to see all the flags and the usage that comes with the commit option, you can use the command : git commit --help
+There are 2 flags that are mostly used :
+-a flag indicates that you want to commit the tracked files only (if you don't use this flag, then it considers all the files for commit)
+-m flag is used to add a message for the commit which helps later to understand the change done in that point of time just by reading the message
+The command to commit is : git commit -a -m "<your message>"
+
+In order to view the commits, the command to use is : git log
+It lists latest few commits made with the commit_id and message in detail for each commits
+If you have many commits and you want to list them all, then the command to use is : git log --oneline
+It lists all the commits with the id and message in oneline
+
+
+* Checkout :
+If you want to go back in time and see the changes that were done previously, you can do that by using the checkout feature
+This doesnot mean that the latest changes are erased, we can again come back to the latest commit
+In order to move back in time and see the changes for any particular commit, we do it by using the commit_id
+The command is : git checkout <commit_id>
+After you run the command, you will notice that the head will not be pointing to the master which signifies that you are not looking in the latest commit
+In order to come back to the latest commit, use command : git checkout master
+
+
+* Revert :
+This helps to revert the changes done in a particular commit. This can be very confusing sometime. This only does for one commit and once it is done it 
+basically creates a new commit saying that the commit that you have selected is reverted. You can give your custom message as well. This is a bit safer than
+reset because here you are just reverting any one particular commit while in reset you go back in time and there is no comming back. Basically whichever
+commit that you have selected to go back to, it goes to that commit and makes it as the HEAD.
+
+Command to use revert : 
+git revert <commit_id>
+
+Once you press enter it asks for a message
+
+
+* Reset :
+When you are 100% sure that you want to start from a particular point, then reset can be used. It takes the HEAD to that point and makes it as current
+directory. It doesnot create any commits, it just goes back in time and stays there. This is the reason, reset can sometimes be very dangerous. 
+It works in three different stages :
+i. Soft - This is like mostly checkout (Use of checkout is preffered over reset)
+ii. Mixed - This is in between Soft and Hard
+iii. Hard - This is when yo you go back to a particular commit and makes it as the current state of the project
+
+Command to use Hard reset :
+git reset --hard <commit_id>
+
+Once you press enter, the head will move to the commit that has been provided while doing reset and it deletes all other commits that had happened after 
+that commit. (It becomes the master)
+
+
+* .gitignore : 
+This helps to ignore files or folders that you don't want to track permanently
+In order to do that - you have to create a file .gitignore and there you have to list down all the files or folders that you don't want to track
+
+Command to create .gitignore file - touch .gitignore
+Once you hit enter you will see a file with no name gets generated and when you open the file you will be able to see the name as .gitignore
+If you want to add comments in the file, then you can use "#" before the comment.
+
+NOTE : The changes in the untracked files will keep coming unless the .gitignore file is commited
+       (Used to happen previously, not the case now :)
+       Now once it is commited you may still see the files as modified in the Staging Area and the reason for that is, git still caches the changes 
+       In order to fix it completely, you need to remove all the cached memory and the command for that is :
+       --> git rm -r --cached .
+
+
+* Branches :
+Branches are a separate chain of commits which helps to create a separate development path without overriding or creates copies of your project
+They can be added, deleted and merged
+-> To create a branch : git branch <branch_name>
+-> To create and switch to the created branch : git checkout -b <branch_name>
+-> To switch to a different branch : git checkout <branch_name>
+-> To list all branches : git branch -a (current branch is shown with an asterik)
+-> To delete a branch : git branch -d <branch_name> (current branch cannot be deleted)
+
+Commiting a branch is same as how we commit in master branch and when you check the log you will see the HEAD will be pointing to the branch in which you 
+are making commits on.
+
+
+* Merging Branches :
+When you want to merge any branch into the master branch, then you firt need to come back to the master branch or the branch where you want the merge to
+happen and then merge the other branch that you want
+
+Scenario : There is "dev" branch and a "master" branch and if I want to merge the changes that has been made in "dev" branch into "master" branch, then
+i have to go to "master" branch first and then merge with the "dev" branch :
+ 
+git checkout master					--> moving into "master" branch
+git status 						--> making sure that "master" branch is clean
+git merge dev						--> merging changes from "dev" branch into "master" branch
+
+NOTE : After merging, the HEAD will point to master, dev since both are at same timeline now (in-sync)
+
+
+* GitHub :
+GitHub is a cloud repository that is managed with small commands and together with git it becomes a very powerful tool with a backup that you don't have
+to get concerned for.
+
+It allows you to :
+i> Have a portfolio for your best work
+ii> Open opportunities you might not have with a local repository
+iii> Easy access from any device in any location
+iv> Industry standard for hosting Git repositories
+
+
+* Creating a new repo in github :
+After account creation is done, go to myProfile and there under Repositories tab, you will get the option to create a new repo
+
+
+* Other Repositories :
+Watch - Any kind of update made to repository triggers a notification to the watchers
+Star - Same as bookmarking a repo
+Fork - This creates a copy of the repo to your own account (That repo can be called as Forked repo)
+Clone - Cloning takes the repo and creates a copy in the local machine from where you can interact with the repo directly
+Download - Downloading means copying the entire contents of the directory as a zip file (doesnot get the git properties - meaning if you run any git
+	   command, it is not going to recognize)
+
+
+* Connecting Git & Github :
+First you have to create a repo that you want to connect to from your local machine
+Once, the repo is created in github, you have to create a directory in your local machine and initialize the local git repo 
+NOTE : must initialize before connecting
+Now, in order to connect those two, you have to copy the repo link from github and then in order to connect you need to run the below command :
+git remote add origin <link>
+Now, both git and github repositories are connected
+To check if the connection is proper : git remote -v
+
+
+* Pulling & pushing latest information from & to master branch in Github :
+In order to pull latest data from Github, use command - git pull origin master
+In order to push latest data into Github, use command - git push -u origin master
+NOTE : -u is to remember and track the branch, thus there is no need to mention name of the branch while pulling or pushing from the next time
+
+
+* Creating, pulling & pushing latest information from & to other branch in Github :
+pulling latest info from master branch - git pull origin master
+pulling latest info from other branch - git pull origin <other_branch_name>
+creating a branch - git checkout -b <branch_name>
+after making changes, adding into staging area - git add .
+commiting changes - git commit -m "some message"
+pushing changes made in the branch to github (pushing branch) - git push origin <branch_name>
+raising a PR (Pull Request) to merge into master (through Github)
+once it is merged, deleting branch from git (local) - git branch -d <branch_name>
+deleting branch from github (remote) - git push origin --delete <branch_name>
+
+
+* Alternate ways to use git and github (SourceTree) :
+SourceTree is a git GUI which allows you to interact with your repositories through a graphical interface
+It uses all the core git commands but are executed through icons and buttons instead of terminal commands
+It is an alternative to the terminal when using git
+
+
+* Git Rebase :

@@ -1,0 +1,907 @@
+Data Analysts - Ingest -> Transform -> Store -> Analyse -> Visualize
+
+Problems : (Tools for solution)
+Ingest - Data Volume, Data Variety, Data Velocity (BigQuery Storage)
+Transform - Slow exploration, Slow processing, Unclear logic (BigQuery Analysis, Cloud Dataprep)
+Store - Storage cost, Hard to scale, Latency issues (Cloud Storage, BigQuery Storage)
+Analyse - Slow queries, Data volume, Siloed data (BigQuery Analysis))
+Visualize - Dataset size, Tool latency (Google Data Studio, Looker)
+
+BigQuery Features :
+1. Don't have to manage the infrastructure
+2. Focus on finding insights
+3. Fully managed peta-byte scale data warehouse
+4. Reliable since it is backed by Google Datacenters
+5. Economical since you only pay for the processing and storage that you use
+6. Secure data since it is encrypted and transported and also has access control
+7. Auditable since every transaction is logged and it is queryable
+8. Scalable since it can process large data in parallel processing model
+9. Flexible, Easy to use since it uses SQL and no indexes and also it has public datasets for practice
+
+Three ways to interface with BigQuery :
+1. Web UI
+2. Command-Line Interface (CLI)
+3. Rest API
+
+**
+
+Storage Pricing :
+It is based on the amount of data stored in tables when it is uncompressed
+The size of the data is calculated based on the data types of the indivisual columns
+Active storage pricing is prorated per MB per sec
+If a partition or non-partition table is not edited for 90+ consecutive days, then it is considered as long term storage and the pricing drops by approx 50%
+There is no degradation of performance, durability, availability and functionality
+If the table is edited the price reverts back to the regular storage pricing and the 90 day timer starts counting from 0 again.
+Benefit of partition table is that even you don't get any improvement in performance, you can save on storage
+If the data or the structure of the table is not effected, then the timer is also not reset to 0
+
+Analytics Engine (Processing Price) Pricing :
+The default pricing is On-Demand
+Organizations who prefer a consistent bill amount may opt for Flat rate pricing
+Capacity is sold in in-comence of 500 slots with a current minimum of 500 slots
+Slots are available in the following commitment plans :
+On-Demand Pricing : 
+	On-Demand is purely on usage and it is calculated on Bytes read (No of Bytes processed). It doesn't matter where the data is stored
+	You can set User-Level or Project-Level custom cost controls
+	You can set the maximum bytes billed by query. If it goes beyond the permissible limits, the query fails and nothing is charged
+	Query Charges - BQ uses columnar data structure. You are charged according to the total data processed in the columns you select and the total 
+			data per column is calculated on the basis of the types of data in the column. You are not charged for the queries that returns an 
+			error or from queries that retrieve results from the cache. Using results from cache is ON by default. Queries are rounded to 
+			nearest MB with a minimum 10 MB data process per table referenced by the query and with a minimum 10 MB data processed per query.
+			Cancelling a query may incur charges upto the full cost of the query where it is allowed to run to completion. When you run a query,
+			you are charged according to the data processed in the columns you select, even you set an explicit LIMIT clause on the results
+			and thats because LIMIT is processed after the query completes. Partitioning and clustering tables can help reduce the amount of
+			data processed by queries. As best practice, use partitioning and clustering whenever possible.
+	On-Demand pricing is also referred as analysis pricing on the Google cloud's skews page. This is useful if you are looking at billing reports
+Flat Rate Pricing :
+	It limits the number of slots used at any time. Slot usage includes resources required for both DML and DDL
+	If the query exceeds the Flat Rate capacity, your queries are queued untill your flat rate resources are available
+	Storage Cost is calculated independently
+	Price not only depends on the number of slots but also on the region in which the slots are purchased
+	By Default, Flat rate pricing is calculated on a monthly commitment but you can get a discounted price for an annual commitment
+	Big Query limits the rate of incoming requests on a per project basis
+	Google Cloud Support can be contacted if you wish to increase quotas however additional charges may occur
+	Considerations - 
+		Flex Slots are a special commitment type and the commitment duration is only 60sec and you can cancel flex slots any time thereafter
+		You are also charged only for the seconds your commitment was deployed. They are subject to Capacity Availability where you attempt 
+		to purchase flex slots, the success of the purchase is not guaranteed however once your commitment purchase is successful, your capacity
+		is guaranteed untill you cancel it.
+		Monthly commitments cannot be cancelled for 30 days after your commitment is Active. After the first 30 calender days, you can cancel or
+		downgrade any time. If you cancel or downgrade, charges are prorated per second at the monthly rate.
+		Prior to the anniversary of your commitment date, you can choose to renew you for another year or convert it to a monthly or flex commitment
+		If you move to the monthly rate, you can cancel at any time and you are charged per second at the monthly rate
+		If you determine you require more BigQuery slots, you can purchase an additional increments of 500 however doing so will convey a new
+		commitment
+		When you purchase at a flat rate plan you specify the allocation of plans by location. To use slots in multiple locations you must purchase
+		slots in each location
+		A project can use either flat rate or on-demand pricing. If you have multiple projects in a given location, you can choose which project can
+		use Flat rate pricing and which project can use on-demand pricing
+		To dis-continue a flat rate pricing plan, you must cancel or downgrade your commitment but only after the initial commitment period of 30
+		Days or 1 year
+
+On-Demand queries are charged at number of bytes read. If your query processess a small amount of data, you might need to convert the bytes that are 
+processed from Kilo-Bytes to Mega-Bytes. A MB is the smallest measure that is used by the google cloud pricing calculator.
+
+When you enter a query in the cloud console, the query validator verifies query syntax and provides an estimate of the number of Bytes to be read. You can
+use this estimate to calculate query cost in the pricing calculator.
+
+When you run a query in CLI, you can use the [dry run] flag to estimate the number of Bytes read. When you run the command in the dry run state, the query
+is not executed and the response contains the estimated bytes. You can also perform dry run estimates by the API or using Language Libraries for Go, Python
+and so on.
+
+The Google Cloud Pricing Calculator can be used to estimate the On-Demand cost of queries or storage or both. 
+To estimate On-Demand query cost enter the number of Bytes that are processed by the query as MB, GB, TB or PB. If your query processess less than 1 TB,
+the estimate is 0$ because BigQuery provides one TB of on-demand processing free per month.
+To estimate On-Demand storage costs, enter the number of Bytes that are stored as MB, GB, TB or PB. BigQuery provides 10GB of storage free per month.
+
+A flat rate pricing is applied to a billing account. You can click the Flat-Rate tab, choose the location and number of slots, then add storage costs to 
+the estimate. A BQ slot is a propiratory measure of capacity. You can choose a number of slots between 500 and 200000.
+
+Slot - It is a combination of CPU, Memory and Networking resources. It also includes a number of supporting technologies and sub-services.
+
+5 Qualities of a High Quality Data set :
+Validity
+Accuracy
+Completeness
+Consistency
+Uniformity
+
+**
+
+Data Engineering - Data Engineering is nothing but creating data pipelines in order to bring raw data from different sources and modify it to make it
+usable
+
+Data Lake - 
+A Data Lake is a storage which brings the data from the entire enterprise into a central location
+One example of storing the raw data in a single location is to store the data in a cloud storage bucket as part of Data Lake
+The purpose of a Data Lake is to make data accesible for analytics
+
+Mostly we will be loading data into the google cloud bucket using commands and then it is taken into BigQuery
+
+If your Raw data needs additional processing, then have to Extract, Transform and then Load the data. 
+Tools for Data processing are - Cloud Dataproc & Cloud Dataflow
+-> These are used to create batch pipelines
+
+** If you need real time analytics on data that keeps arriving continuously and endlessly, then 
+you will receive the data in "Cloud Pub/Sub"
+transform it using "Cloud Dataflow"
+and stream it into "BigQuery"
+-> These are use to create streaming pipelines
+
+Cloud IAM - Identity and Access Management is a cloud access management system which replaces the traditional Grant and Revoke statements in SQL
+
+Data Lakes :
+A Data Lake is a secure storage where anything and everything can be stored and dumped in large scale for processing and analytics. These are typically
+used to drive Data Analytics, Data Science & ML workloads or Batch & Streaming pipelines. They accept all types of data. They are portable, On-Premise or
+in the cloud
+
+This is one system that acts as the main source of all of your data. A Data Engineer has to build pipeline in order to extract and get reliable and useful
+data, transform and massage to make it meaningful and then load it into the Data Warehouse
+
+The process which helps to extract, clean or transform and then load is known as Data Pipeline
+
+Data Pipeline brings all the required fresh data into the Data Warehouse while Orchestration Workflows helps to kick-in the Data Pipeline work whenever 
+there is any triggering event (like getting new data)
+
+* Correspondng Tools in Google Cloud Platform :
+Data Lake -> "Google Cloud Storage Buckets" (It is one of the option in GCP but not the only one) & "Cloud SQL"/"Cloud Spanner" (for relational data) &
+	     "Cloud Firestore"/"Cloud Bigtable" (for nosql data)
+Data Warehouse -> Google BigQuery
+
+Data Warehouse :
+The idea is that, since the schema in DW is consistent, other teams can directly run queries and get information from the DW itself within no time. DW is
+structured and semi-structured schema where data is kept organised and placed into a format that makes it contusive for immediate quering and analysis
+
+Google Cloud Storage Bucket is the essential cloud storage service to work with data specially unstructured data. Most popular Data Lake option in the 
+platform.
+
+Cloud Storage Bucket is an object store and all the other functionalities are stored on top of it. Two main entities of Cloud Storage are buckets and 
+objects. Buckets are containers which holds objects which in turn contains data. A bucket can be associated with region or multiple regions. For a 
+multi-region bucket, object is replicated in different regions while in single-region bucket, object is replicated in different zones of the same region.
+When a request is made, the object value is returned from the closest region from where the request is made. Objects are stored with Metadata as well.
+Metadata is information about that object. These have info regarding access control, compression, encryption and life cycle management of objects and 
+buckets.
+
+Creating a bucket :
+gsutil mb gs://<bucket_name>
+
+1175
+
+Materialized View :
+-----------------
+Client
+Cloud Provider
+Product Details
+Cost (SUM)
+Year Month
+
+
+
+
+
+
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------
+---------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+
+
+* Google BigQuery - 
+It is a serverless, highly scalable, cost-effective, PetaByte scaled mordern cloud based datawarehousing tool provided by Google Cloud.
+It is a fully managed, data analysis service which is designed and optimized for speed
+It has the capability to process large amounts of data within seconds.
+
+
+
+* Advantages -
+i> Both batch and stream data ingestion is possible through BigQuery. It has the capability to store 100000 rows of streaming data per second and TB of
+batch data per second
+ii> Supports AI and ML. Create ML models using BigQuery ML which uses SQL like queries and also very easily integrated with AI platforms
+iii> Fully managed and highly scalable
+iv> Pricing model is on-demand (pay as you go). Also results are cached and thus if you run the same query again, you won't get charged and the result
+will be available to you witin 0-sec
+v> Provides automated data transfer mechanism on a scheduled and full managed basis
+vi> Simplifies the use of operation with the help of IAM (Identity & Access Management) to control the access for particular users
+
+
+
+* BigQuery Out-Of-The-Box Features :
+i> BigQuery natively supports GIS (Geographic Information System) for obtaining insights from your geographic data points using longitude and latitude
+ii> Automatically replicates data and keeps a 7 day history of changes allowing you to easily restore and compare data from different times
+iii> Easy integration with other GCP services
+iv> Foundation for BI as it allows seamless data integration, transformation, analysis, visualization and reporting
+v> Provides rest API for easy programatic access and application integration
+vi> Data is secured at the highest level of security. Data is always encrypted at rest and in transit and also different data blocks are encrypted with
+different keys
+vii> Provides rich monitoring, logging and alerting through Cloud Audit Logs
+viii> Allows quering from the external data sources without even ingesting in BigQuery (knows as "Federated Queries")
+ix> Allows you to run open source data science workloads
+x> Google cloud offers a powerful data repository of more than 100 high-demand datasets from different industries
+
+
+
+* Architecture of BigQuery :
+BigQuery uses google's "Dremel" engine at it's core to query huge stores of data. It uses a combination of columnar data layouts and tree architecture
+to process incoming query request. 
+NOTE : Dremel is google's core engine that supports features of many services like gmail and youtube
+BigQuery uses the latest version of google's distributed file system named - "Colossus". The colossus file system uses columnar storage and compression
+algorithms to optimally store data for analytical purposes. It stores data in a columnar format, known as capacitor
+-> Example, we have data like this :
+John		Finance		1300
+Kaily		Store		4500
+Peter		HR		670
+
+Row Format -> John Finance 1300 Kaily Store 4500 Peter HR 670 (Table Scan --->)
+Column Format -> File1 - John Kaily Peter	File2 - Finance Store HR	File3 - 1300 4500 670
+In this format, since the data are present in different files, the parallel processing becomes much easier
+NOTE : The difference between other columnar store and BigQuery is that Capacitor can fetch data directly from the compressed file on the fly which in turn
+       saves a lot of resources and time
+
+With the architecture and design of the BigQuery, you can see that why it is capable and fast enough to process data :
+-> It is because the storage and compute are decoupled from each other and they both scale independently on-demand. This offers immense flexibility and
+   cost control to the business. This is possible because of the Petabit network bandwidth of the google cloud.
+
+
+
+* BigQuery Project Setup -
+On top we have projects and from there we can create a new project as well.
+Under Project we have Datasets which are nothing but folders or a place where tables are stored as files.
+Under Dataset we have Tables where we store the information.
+
+
+
+* Dataset -
+Datasets are like folders (top level containers) where actual tables are stored as files.
+The name of the Dataset can contain 1024 characters (upper, lower, number, underscore) and cannot contain spaces, -, &, @, % and other special characters.
+The name of the Dataset is case-sensitive as well - meaning "DATASET1" & "dataset1" will be considered as two different datasets & can co-exist together.
+While creating a Dataset, you can set the expiration option which sets a date in the background after which the table gets automatically deleted.
+In order to create a dataset, the following options are required :
+	1. Project ID - The project under which you want to create the dataset.
+	2. Dataset ID - The name that you want to give to the dataset you are creating.
+	3. Data location (optional) - The location of the server where you want the data to reside in. (Default will set the location to US)
+				      There are two types of region :
+				      i> Region - A region is a specific geographic place such as Mumbai. If you are choosing "Mumbai" as location,
+						  google will ensure that all the tables and views of this Dataset will be stored in data-center located
+						  in Mumbai. This is usually done, when you know that the data will be accessed usually from nearby
+						  Mumbai region which will basically avoid any network latency and the data will be immediately available.
+				      ii> Multi-Region - It is a large geographic area which contains many regions. As of now, we have two multi-regions 
+							 which are US and EU. This is usually done, when you know that the data will be accessed from
+							 many regions and thus it creates copies of data in different different regions under that specific
+							 Multi-Region that has been selected.
+	NOTE : Failures - There are two types of Failures :
+	       i> Soft Failure - It is an operational deficiency which includes power failure, network partition, machine crash etc
+	       ii> Hard Failure - It is an operational deficiency when the hardware itself gets destroyed which is usually from Floods, Earthquakes etc
+	       In a single region, data is stored only in that region (there is no google cloud backup or replication in another region). There will be
+	       copies of your data but will be present in the datacenter of the same region. So, it is said that a Regional data is resilient to soft
+	       failures only but not to hard failures. The data can be lost if the whole region is hit by a disaster and thus it is said that Multi-Regional
+	       data is resilient to both soft and hard failures. In case of Multi-Region, the recovery and maintainance of data is fully managed by Google.
+	4. Enable Table Expiration (optional) - If you want to delete the tables in some point of time, then you can provide the number of days after which
+						you want the tables to expire automatically. The other option is "Never". This table expiration property 
+						can be set after creating table in the table settings as well and if you do so, then expiration days set 
+						in the dataset will be ignored and the table will be deleted according to what is set in the table expiration
+						property of the table.
+	5. Encryption (optional) - This option comes under advanced options. By-Default the encryption taken is Google-managed but if you want to provide
+				   your own encryption, then you can select Customer-managed encryption key and then you have to select the Key Resource Name.
+				   NOTE : In order to select Customer-managed encryption option, you need to create Key Resource first.
+
+Quotas & Limits :
+1. Unlimited datasets can be created per project but as soon as you approach 1000 datasets, dashboard's performance begins to degrade and listing the 
+   datasets also becomes slower.
+2. No of tables that can be created are also unrestricted but as soon as you approach 50000 tables, enumerating them becomes slower.
+3. Maximum 2500 authorized views can be created.
+
+
+
+* Tables - 
+Tables are the BigQuery objects in which information is stored.
+These are the objects which reside inside the Dataset.
+These are of two types :
+1. Native Table - Which resides inside of BigQuery storage
+2. External Table - Which resides outside of BigQuery such as in GCS Bucket
+
+Table names properties :
+1. Table names are unique per dataset. 
+2. Auto-detect schema option is only applicable when you load the data in BigQuery and when you query an external data source.
+
+Column names properties :
+1. Column names must contain only letters, numbers or underscore while it should start either with letter or underscore.
+2. Maximum column name length is 128 characters.
+3. Cannot use : _TABLE_, _FILE_, _PARTITION.
+4. Duplicate columns are not allowed.
+5. It is not case-sensitive meaning "COLUMN1" & "column1" will be treated same and cannot co-exist in one table.
+
+Modes for Columns in BigQuery :
+1. NULLABLE - This allows entries of null value in the field (This is the default option)
+2. REQUIRED - This doesnot allow null values 
+3. REPEATED - This has an array of values of a specified type
+
+Few advanced option properties :
+1. Unknown values - If you check this option, then extra column values that donot match with the schema of the table will be ignored and will not be
+		    imported to BigQuery
+2. Jagged rows - If you check this option, then all the missing trailing column values are treated as null by itself otherwise it will be treated as bad
+		 records and if there are many bad records, the job will fail
+
+NOTE : Table expiration property cannot be set while creating the table using console. It can be added/updated once the table is created.
+
+As of now, there are 7 options with which a table can be created :
+	1. Empty Table - Here you need to provide the schema manually and define all the properties of the fields that you are including in the table.
+	2. Google Cloud Storage - If you have a file stored in GCS Bucket, then you can create a table by selecting the file from there as well.
+	3. Upload - If you have a file stored in your local system, then you can create a table by selecting the file from your local.
+	4. Drive - You can create a table by selecting file from Google Drive.
+	5. Google Bigtable - You can create a table from Bigtable as well but for that you need to create the connection first since it is now an approved
+			     external data source which is available to BigQuery through CLI.
+	6. Amazon S3 - You can create a table by selecting file from Amazon S3 bucket as well.
+	7. Azure Blob Storage - You can create a table by selecting file from Azure Blob Storage as well.
+NOTE : Apart from Empty Table option, you will get the option to detect the schema automatically for all the other options of creating table.
+When you go to Advanced options of creating table, there you get Write Preference :
+	1. Write if empty - This is the default option. This says that if the table doesnot exists, then it creates the table.
+	2. Append to table - If you want to append the data to the existing data, then this is the option to select.
+	3. Overwrite table - If you want to overwrite the existing data, then this is the option to select.
+
+Quotas & Limits :
+1. Limited to 1500 operations per table per day.
+2. Maximum columns in a table, query result or in a view can be 10000.
+
+
+
+* Running Queries :
+By default, when you run queries in BigQuery, it uses BigQuery engine to process the data which is a batch process (data is processed in batch)
+When you want to process streaming data and not batch data, then Cloud Dataflow engine will come into the picture
+NOTE : Both of the above options are present in the Query Settings option
+By default, BigQuery saves all query results into a temporary table. You can change this setting and save the result into a permanent table as well by
+using the "Query Settings" option. These temporary tables are responsible for caching the query results. The temporary tables remain active in BigQuery
+environment for approximately 24 hours.
+
+
+
+* Caching Features & Limitations :
+1. To retrieve chached results, the query should be exactly same as it was during it's first run
+2. Results are not cached when you are storing the result into a destination table (permanent table)
+3. Results are not cached if the table/view used in the query have changed since the last chached
+4. Results are not cached for the tables having streaming ingestion
+5. Results are not cached if the query used has non-deterministic functions used such as CURRENT_TIMESTAMP(), NOW(), CURRENT_USER() etc
+6. Results are not cached when the queries are run against external data sources like BigTable or CloudStorage
+7. Results are cached for the result set which are smaller than maximum response size (i.e 10 GB compressed size by default)
+8. A Byte limit can be set for cost control. If the query uses more bytes to process than specified amount, it will fail without incurring any charge
+
+
+
+* Wildcard Tables (Querying Mutiple Tables using a wildcard) :
+Wildcards tables enables you to query multiple tables at once using concise SQL statements
+These are union of all the tables that matches a wildcard expression
+In order to use wildcards and query from multiple tables, the schema should be same or atleast compatible within tables that are matched
+Example : Suppose you have three tables namely - table1, table2 & table3. To query all tables at once :
+------->  select * from `project_name.dataset_name.table*`;  -- This will consider all the three tables
+
+Table suffix pseudo columns : (Picking selective tables from the wildcard matched tables)
+When you write a wildcard query for a table, then each row in the wildcard table would have an internal pseudo column i.e. "_TABLE_SUFFIX" that contains
+the value which is matched by the wildcard character
+Example : If we consider the above example, then _TABLE_SUFFIX would have distinct values as 1, 2 & 3
+------->  select * from `project_name.dataset_name.table*` where _TABLE_SUFFIX in (2, 3);  -- This will consider only table2 & table3
+
+Wildcard limitations :
+1. Wildcard table supports native BigQuery storage only. Cannot be used with external table or view. If the wildcard matched any view in the dataset, it
+   return an error and the query will fail. It will fail even if you provide a condition using the _TABLE_SUFFIX pseudo column.
+2. Cached results are not supported for the queries which uses multiple tables using a wildcard even if the cached results option is checked in the Query
+   setting option.
+3. Wildcards for tables cannot be used in DML statements.
+NOTE : 
+The schema of the table selected using wildcard will be of the table that got matched and is created most recently.
+Longer prefixes perform better than shorter ones because in shorter ones, it has to scan more number of tables.
+
+
+
+* Schedule Query :
+This is used when you want to run the same query on a recurring basis
+This uses the feature of BigQuery Transfer Service (You need to enable the Transfer API to use this service)
+
+Scheduling a backfill run - A backfill is used when a scheduled query is failed and you need to run the same query to get the data for an older time 
+			    period. 
+
+
+
+* Saving and Sharing Query :
+Once you run the query, you get options to save and share.
+You get two options while saving a query :
+1. Personal - Only visible to the person who has saved the query
+2. Project - Visible to all members of the project that is set through IAM
+Once you save a query in project level, you get a sharable link of the query
+NOTE : The link will only show the query text, the member who is looking into the query will still need appropriate permissions to run the query
+
+
+
+* Auto Schema Detection :
+We have already seen that, while creating table from upload or any external source, we get this option to detect the schema automatically.
+This schema detection option is available only for file types - csv & json
+
+Working - BigQuery selects the file in the datasource and then scans upto 100 rows as sample by examining each field and attempts to assign a data type
+based on the sample values
+
+Auto detection recognizes the following :
+1. Gzip compatible file compression
+2. can detect comma, pipe, tab etc as delimeter
+3. can detect headers from file by comparing the first row with other rows. If the first row has all string values, then it considers as header and creates
+   the table with the columns having the same name that is present in the file
+4. can detect endline character but if it is in quotes (like - "/n"), then it considers as string and not endline
+5. auto detection assumes the date in the format - "YYYY-MM-DD". If the format is different, it takes it as string
+6. during auto-detection, the mode for the columns are taken with default value i.e. NULLABLE
+
+
+
+* Efficient DataWarehouse Schema Designing :
+BigQuery performs best when your data is de-normalized
+It is recommended not to create traditional DW schemas like star and snowflake, rather keep it flat
+
+Normalization - It is a process of eliminating redundant data (duplicates) to minimize the DML anomalies (deviates from what is standard).
+		Helps in maintaining disk space and also maintaining data integrity.
+		This includes multiple tables related to each other so that main data can be put into the main table and related data are put into the 
+		corresponding related tables.
+
+The down side of this is that the select queries take much time to return the results since it has to jump from different different tables to get the 
+information that is required. This is where de-normalized databases comes in (specifically when you want your selects to be faster)
+
+De-Normalization - It is a strategy which allows duplicate values of any column to gain processing performance
+		   Here, the focus is more on the faster return of the results than to avoid redundancy
+		   And that's why in de-normalization, all the table fields are merged together to form a single flat table
+
+De-Normalizing data in BigQuery enables you to more efficiently distribute processing among slots since it stores data in columnar fashion and can be 
+processed in parallel.
+NOTE : There are few scenarios, where de-normalizing the data is bad for performance specifically when you have to group by a column in a one-many
+relationship. As grouping is one of the slowest operations in data processing and you want to group by a column which has repeating data because of 
+one-many relationship, then it needs to do a lot of shuffling and thus making the query slower. 
+In case of BigQuery, it has a method to improve the situation. It supports columns with nested and repeated data. The same data in BigQuery will be saved
+in a silghtly different way. It stores all the repeating values in one row itself and the distinct values in other rows while keeping column values of 
+the repeating fields as blank which signifies that, all the values are under the same row.
+
+Example :
+order_id	str_loc		cust_id		cust_nm		amount		prdct_id	prdct_nm	pdct_prc
+1		New York	C01		John		1450		1234		Shampoo		140
+1		New York	C01		John		1450		421		Grinder		240
+2		New York	C034		Smith		1250		34		Table		140
+2		New York	C034		Smith		1250		42		Chair		240
+
+In BigQuery, the same data can be arranged like this :
+order_id	str_loc		cust_id		cust_nm		amount		prdct_id	prdct_nm	pdct_prc
+1		New York	C01		John		1450		1234		Shampoo		140
+										421		Grinder		240
+2		New York	C034		Smith		1250		34		Table		140
+										42		Chair		240
+
+Here, the data is not duplicated and still it is in one table. Only the nested columns are repeated. Since there were many products under a single order_id,
+that's why an array of those products and since product details was having multiple columns, it would be an array of struct type.
+
+In BigQuery - Nested is a synonym to "Struct" data type and Repeated is a synonym of "Array"
+
+So here, as per the example, we will have array of structs.
+Nested and Repeated columns can maintain relationships without the performance impact by preserving a normalized schema.
+
+For JSON files, we don't need to define any schema since json files itself comes with a defined schema. 
+But as we know that using auto detect-schema feature by default leaves all the fields with NULLABLE mode, we can define the schema manually as well.
+Now in this scenario since we have array of structs for each record, we have to select the Struct field with the type - "RECORD" and mode - "REPEATED"
+Once you select the field type with "RECORD", you will see a "+" sign, with the help of which nested and repeated fields can be added
+
+NOTE :
+Type -> RECORD (means STRUCT)
+Mode -> REPEATED (means ARRAY)
+
+Simple STRUCT fields can be accessed using a "." operator :
+select col1, structcol.col5 from `project_name.dataset_name.table_name` where structcol.col5 = "something";
+
+But, when you have an ARRAY, then you need to unnest the table first before getting access to the array field values :
+select col1, arraycol5 from `project_name.dataset_name.table_name`, UNNEST(arraycol5) as a where a.arraycol5 = "something";
+
+UNNEST function basically flatens the array into a set of rows (opposite of nested)
+
+So now, when you have an ARRAY of STRUCT, then you need to unnest table first and then access the fields using the "." operator :
+select col1, struct_array.col5 from `project_name.dataset_name.table_name` cross join UNNEST(struct_array) as a where a.col5 = "something";
+
+NOTE : 
+CROSS JOIN is a heavy operation and that's why you should choose only the columns that are required
+CROSS JOIN can be replaced with "," - internally both works in the same way
+BigQuery supports conventional DW schema designing as well like snowflake and star schema with keys and normalization - it works efficiently as well
+You can make use of the concepts of NESTED & REPEATED, when your data naturally comes in that format 
+
+
+
+* Operations on Datasets & Tables :
+Giving access controls to the new members for a dataset - As of now, you cannot give permissions on table, view or role level but you can give access 
+controls in dataset level or column level by using BigQuery Column level security. In order to check the permissions, select the dataset and then select 
+"SHARE DATASET". There you will see role-wise access list of the selected dataset. You can add a new member by providing a role and then select "Add".
+
+Once the dataset is created :
+You can edit the description, label and set the expiration datetime. Now since this dataset is already created and there might be tables already residing
+on it, setting an expiration date in the dataset level will not impact the existing tables. Only the new tables will get expired based on what is provided
+on the dataset and that too if the table itself doesnot have any expiration set for itself.
+
+Changing name or copying dataset to move to a new region :
+To copy the dataset, BigQuery Transfer Service API should be enabled
+First we have to create a new dataset with new name or new location
+NOTE : Datasets can be copied to from Region to Region, Single to Multi-Region, Multi to Single-Region and Multi to Multi-Region. As of now, all regions 
+       are currently not supported for dataset copying.
+Now, select the source dataset, select copy dataset, a dialogue box will open
+select destination project & dataset from there
+There is an option to overwrite destination table as well. This will only work if you have the same tables already present in the destination and you do
+want to overwrite the data from the source dataset.
+
+NOTE : If there is already a table present in the destination dataset which is same as what is present in the source and if the source table has not 
+changed from the last copy, then that table in the destination dataset will be skipped during copying even if overwrite destination option is checked.
+
+
+
+* Automate copying datasets operation (Transfer Service for scheduling copy jobs) :
+We have a dedicated Transfer Service to automate the copy dataset process. This can be done by using the "Transfers" option provided by BigQuery.
+Steps to create copy jobs :
+1. Click "Transfers". Once you click - you will see all the list of copy jobs created and another option you will see is "Create Transfer".
+2. Click on "Create Transfer". Once you click - you will get a dropdown which will ask you to select a source. You have a long list of sources from where
+   you can transfer data. You have an option to select "Dataset copy" as well.
+3. Select "Dataset copy".
+4. Transfer config name - Provide a name to this Transfer.
+5. Select the schedule option. You can start immediately as well by selecting "Start now" or else select "Start at set time".
+6. Under Destination Settings - Select the dataset that you want the data to move into.
+NOTE : There is an option to create a new dataset as well but it doesnot work always and therefore it is recommended to create a destination dataset before
+       setting up the Transfer Service.
+7. Under Data source details - Type the dataset name from where you want to copy the data and then type the project (def to dest. project if left empty)
+8. You get an option to "Overwrite destination table". Check or un-check according to the need.
+9. Last option is "Email notifications" - This one is optional but if it is checked, then Transfer administrator will receive e-mail notification when a
+   transfer run fails.
+10. Click on "Save". You now have your data transfer services sheduled.
+
+Pricing :
+There is no charge for dataset copying during the beta period but when the service is live for general availability, then the data copied between regions
+will be billed at the same rate as pricing for compute engine network egress (action for going out) between regions. It follows differencial pricing model.
+
+Quotas and Limitations : (These are different for in-region and cross-regions)
+In-Region Quotas - 
+1. Copy jobs per destination table per day is 1000 (including failures)
+2. Copy jobs per project per day is 100000 (including failures)
+3. Source dataset can have max 20000 tables, all of which can be copied parallely
+
+Cross-Region Quotas - 
+1. Copy jobs per destination table per day is 100 (including failures)
+2. Copy jobs per project per day is 2000 (including failures)
+3. Source dataset can have max 20000 tables, max 1000 of them can be copied parallely
+
+Limitations - 
+1. For each dataset copy configuration, there can be only 1 active copy at a time. Additional transfer runs are queued.
+2. Copying views, external tables and streaming buffer are not supported.
+3. Encrypted tables that too with customer managed encryption supports copying only within the same region. Google encrypted tables supports both region
+   as well as cross-region copy. The customer encrypted tables will be skipped while copying in cross-region.
+
+
+
+* Native operations on table for Schema change :
+Copying tables are very simple and the steps to copy table is same as the way we copy dataset. Only thing to consider is that the source and the destination
+dataset must be in the same location.
+Schema changes in BigQuery are classified into 2 types :
+1. Native Schema Change - BigQuery natively supports only two schema modifications : 
+			  i> Adding new columns to an existing schema defination
+			  ii> Relaxing a column's mode from REQUIRED to NULLABLE
+NOTE : All other schema modifications, like changing column name, changing column's data type etc are unsupported and require manual workarounds.
+
+When you edit schema, you will see that you only get option to change the mode for only REQUIRED columns and you can only change it to NULLABLE and once it 
+is done, you cannot change it back. Also, when you add new columns to the existing schema, you will see that you can only select the mode as NULLABLE or 
+REPEATED. 
+
+When we are trying to overwrite an existing table from upload file which has a new field, then first we need to add a new field in the existing table
+and then upload the file by selecting create table option and provide the same existing table name that we want to overwrite. We can check the schema 
+detection or can provide the schema manually as well and from the Advanced option we need to select "Overwrite table" option.
+
+When we are trying to append an existing table from upload file which has a new field, then first we need to add the new field in the existing table
+and then upload the file by selecting create table option and provide the same existing table name that we want to append to. Now, here since we are
+trying to append the data in the existing table, we must have to provide the schema manually and then from the Advanced option we need to select 
+"Append table" option.
+
+2. Manual Schema Change - Changing schema defination through manual workarounds.
+	i> Changing a column's name - Write a select query over the same table and provide the column name that you want to change using the alias and then
+				      from the query settings change the Destination of the table to the same table (provide the exact name of the table)
+				      and also write the preference as "Overwrite table". NOTE : This can incur heavy charges if the table is big and it
+				      has to o through the entire table.
+	ii> Changing a column's type - Write a select query over the same table and cast the column with the new data type that you want to change to and
+				       then from the query settings change the Destination of the table to the same table (provide the exact name of the 
+				       table) and also write the preference as "Overwrite table".
+	iii> Deleting a column - Write a select query over the same table except the column that you want to delete and then from the query settings change 
+				 the Destination of the table to the same table (provide the exact name of the table) and also write the preference as
+				 "Overwrite table".
+				 --> select * except(column_you_want_to_delete) from `project.dataset.table`;
+
+
+
+* Table data recovery :
+You can restore the deleted data of a table within 7 days of deletion using either table decorators or using "SYSTEM_TIME AS OF" in the from clause.
+After 7 days, it is not possible to undelete a table using any method. You can restore the state of your table at any point of time within last 7 days.
+BigQuery maintains a complete 7 day history of changes against your table and it allows you to query a point-in-time snapshot of your data.
+You need to provide a timestamp value for which you want to the see the data for.
+--> select * from `project.dataset.table` FOR SYSTEM_TIME AS OF TIMESTAMP_SUB(CURRENT_TIMESTAMP(), INTERVAL 1 HOUR)
+    This will show you the state of the table one hour before of the current timestamp. Now, if you want to recover it, from the query settings change the
+    destination to the same table and provide write preference as Overwrite.
+
+
+
+* Execution Plan of a Query :
+BigQuery engine breaks the declarative SQL statements into granular sets of execution stages and designs an execution graph.
+
+It lists all the parallel and dependent tasks along with the sequence. Once the plan is ready, BigQuery leverages it's heavily distributed parallel
+architecture to run the plan. All the stages that can run in parallel are put to run in parallel running workers and others are queued. Also, stages 
+communicate with each other by using a fast distributed suffle architecture which is in-memory query execution. BigQuery executes query completely in
+memory. The shuffle step is required for execution of large and complex joins, aggregations and analytic operations. BigQuery stores intermediate data
+produced from various stages of query processing in memory, more precisely in a set of nodes that are dedicated to hosting remote memory.It tightly uses
+memory for shuffle and repartition operations only.
+
+The query execution plan is dynamic, which means that the plan can be modified when the query is already running (on the fly). New stages may be introduced
+while a query is running which is often done to improve data distribution through out the query workers and these new stages that are introduced are 
+typically labeled as "Repartition Stages". You can see the details of a query plan for a query. Once the query is executed, you will get an option to see
+the execution plan of the query (Execution Details)
+
+Elapsed Time - It is the total number of time taken to return the result after the query is executed.
+Slot time consumed - It is a cumulative representation of the slot milliseconds used by the query.
+NOTE : A Slot in BigQuery is the unit of computational capacity required to execute SQL queries. Each slot is like an individual container of compute
+       power, memory and I/O resources.
+Bytes shuffled - The number of bytes shuffled between stages. Lower the better.
+Bytes spilled to Disk - If the data that is to be shuffled is huge, not everything can be shuffled in memory and in that case BigQuery tends to write
+			it to a disk. This parameter shows the bytes that are written to the disk.
+
+
+
+* Partition :
+A partitioned table is a table which is divided into segments (partitions) based on some criteria. It makes the table easy to manage, enhance query
+performance and cost-effectiveness.
+
+Advantages - 
+1. It improves query performance to a great extent and is cost-effective - since it has to scan less data as it knows where to go if the data is filtered 
+									   on the basis of the column with which the table is partitioned.
+2. It increases parallelism factor - Since the data is divided on the basis of a column, any aggregation to be done based on the same column, can be done
+				     parallely because the data is physically divided and stored differenty based on the same column.
+3. Independent partitions can be merged independently - You can choose to compress data in one or more partitions independently.
+4. Different partitions can live on different sub-systems - Less frequently accessed data can be placed in a slower disk and frequently accessed partitions
+							    can sit on a faster disk. All this within the same table.
+5. Helpful while doing upserts on bulk table - This is a common DW practice to do daily incremental loads in the Datawarehouse. Suppose you have a table
+					       which has daily data and everyday the data in added/modified for that month. Now, if you want to upsert
+					       the data into the DW table, it will be very bulky task as it may contain years and years of data. But, if
+					       the DW table is partitioned on the basis of month, then this task will become very easy as we just have to 
+					       replace the current months partitioned data with the data present in the transactional table.
+
+In BigQuery, you can partition the data in three ways :
+1. Ingestion time
+2. Date/Timestamp column
+3. Integer column
+
+1. Ingestion time partitioned tables - In this, BigQuery automatically loads data into daily, date based partitions, that reflect the data's ingestion i.e.
+				       data's arrival date.
+
+Creating an ingestion time partitioned table - All the steps will be same as how we create normal tables. Only thing is in the "Partition and cluster
+settings", you need to select the Partitioning as "Partition by ingestion time". It will ask, if you want to partition to be on daily (By Day) or hourly
+(By Hour) basis. If you select hourly, then it will create partitions by storing all the data ingested in a particular hour. Otherwise, there will be one
+partition per day for all the data loaded in a calender date.
+
+When your data is spread out in a wide range of dates, then daily partition is a good choice. Daily partitioning when used with clustering serves the 
+majority of BigQuery use cases. Choose hourly partitioning when you have high volume of data that spans over a short date range typically less than 6
+months of timestamp values. With short span of date range like in months, you can address the data at hour-level granularity but of you do it for a wide
+span of date, then huge number of partitions will get created and you will end up in degrading the performance than enhancing it.
+
+NOTE : 
+1. There is an option to check - "Require partition filter". If this option is checked, then BigQuery will force the user to include a condition on the
+   partitioned field while querying the table. (The where condition will become mandatory) Requiring a partitioned filter may reduce cost and improve 
+   performance.
+2. Ingestion time partitioned tables has by itself included a pseudo column names - "_PARTITIONTIME", that contains a date based timestamp for data that
+   is loaded into the table. Each partition will have it's ingestion time stored in the pseudo column based on which the number of partitions that are 
+   going to get scanned are restricted. In UI you will see only one pseudo column - "_PARTITIONTIME", but in actual there are two pseudo columns added
+   to the table if partitioning is done on daily basis. In Hourly, it would be one only and that is - "_PARTITIONTIME". In Daily, along with the pseudo
+   column - "_PARTITIONTIME", we have another i.e. "_PARTITIONDATE" pseudo column.
+3. _PARTITIONTIME pseudo column holds the timestamp representation of the loaded date.
+4. _PARTITIONDATE pseudo column holds only the date representation.
+5. Both the pseudo column names are reserved and you cannot create a column with those names.
+6. To query the pseudo columns, using of alias for the pseudo columns is a must.
+
+--> select _PARTITIONTIME as pt, _PARTITIONDATE as pd, col1 from `project.dataset.table` where _PARTITIONDATE = DATE("2022-11-02");   -- "YYYY-MM-DD"
+
+If you want to get detailed information about partitioned tables, you can use special read-only table called - "PARTITIONS_SUMMARY" meta-table.
+This table contains the meta-data of the partitioned tables in a time partitioned table.
+
+Now, to query this table we need to uses a partition decorator separator ($) which is not supported by standard SQL and thus you cannot query in standard
+SQL. Here, we have to choose the "Legacy SQL" option from the query settings.
+--> select * from [dataset.table$__PARTITIONS_SUMMARY__]	-- These are double dashes
+
+Once you run the query, you get the meta-data info of the time partitioned table.
+
+2. Date/Timestamp column partitioned tables - BigQuery allows a table to be partitioned based on a specific date or timestamp column data. Value in the 
+					      date or timestamp column will decide to which partition the record will go in.
+
+In order to create a Date/Timestamp partitioned table, the column with Date or Timestamp data type can be of mode as either NULLABLE or REQUIRED but it
+can't be REPEATED. Also the partitioning column must be a top level field, it cannot be a leaf field from a struct. 
+Ex : If you have Struct column of 2 fields, you cannot partition the table on any of those inside fields of a struct.
+
+Now, under Partitioning and cluster settings, in Partitioning, you will see an option to "Partition by field" and under that you will see the Date/Timestamp
+field. This would not have been shown if there would not have any Date/Timestamp column defined in the schema defination.
+The "_PARTITIONTIME" pseudo column will not be created since we have the partioned column present in the table itself.
+
+NOTE : 
+1. If you have NULL values or Out of scope values present in the Date/Timestamp field, then "PARTITION_SUMMARY" table holds the NULL data into the 
+   partition_id as "__NULL__" and all of the out of scope data will be contained into the partition_id as "__UNPARTITIONED__". 
+2. partition_id is a field present in the PARTITION_SUMMARY table which holds a unique partition_id for every partition that is created for individual
+   partitioned tables.
+
+Now, if you want to see what all values are present under any partition, then you just need to replace the "PARTITIONS_SUMMARY" table with the partition_id
+for which you want the data to see :
+--> select * from [dataset.table$__NULL__]		-- This will list all the records with NULL values in the partition field
+
+Along with holding the out of scope data, this "__UNPARTITIONED__" partition holds the buffer data from realtime streams.
+
+Data streams are the rapidly coming records from the source but these records are not immediately loaded into the table, instead we place a buffer before
+the disk. All these incoming records are stored in the buffer and once the buffer is full or the pre-defined set time is passed, the contents of it are 
+spilled to disk in batches. This is a common write to disk mechanism.
+
+Now, realtime data streams are also read since when you query, the engine hits both DB as well as the buffer.
+
+3. Integer column partitioned tables - BigQuery allows partition based on a specific integer column with your choice of start and interval values.
+
+We should have atleast one integer column in order to create an Integer column partitioned table. The mode of the partitioned column cannot be REPEATED.
+Here, with interger column partitioned tables, the table is partitioned based on a range and the values that falls under the range will go into that 
+specific partition. Hense, in this we have parameters to give such as Start, End and Interval. Here, start value is inclusive but end value is exclusive.
+
+NOTE : Integer column partitioned tables can only be queried through standard SQL. Here also nulls are stored in __NULL__ partition and out of scope values
+       are stored under __UNPARTITIONED__
+
+There is no extra charge for any of the partitioned tables. The charges are based on how much data you are storing and the queries you run against the data.
+
+Quotas & Limitations :
+1. Maximum number of partitions allowed per partitioned table is 4000.
+2. Maximum number of partitions modified by a single job is 4000.
+3. Maximum number of partitions modified per day : (Load, DML)
+	i> By Ingestion time partitioned table is 5000
+	ii> By Column partitioned table is 30,000
+
+
+
+* Managing partitioned tables using DML statements :
+Partitioned tables are no different than non-partitioned tables and thus you can perform all the DML operations, setting expiration date of the table and 
+other things as you do it for normal tables. But in addition to those, in partitioned tables, we can set expiration for the partitions using a DDL statement
+as currently it is not supported by the cloud console. Do note that, you cannot set different expirations for different partitions.
+
+--> ALTER TABLE `project.dataset.table` SET OPTIONS (partition_expiration_days=10);
+This statement will set the expiration for each partition of the table to the date coming after 10 days regardless of when it is created
+
+Here, table expiration has precedence over partition expiration. Meaning if for a table, both table as well as partition expiration date is configured, 
+then the table alon with all it's partition will expire as per the date configured in table expiration settings.
+
+There are three levels of partition expiration :
+1. Dataset level
+2. Table level
+3. Explicitly at Partition level
+
+One can set the partition expiration while defining the dataset or while defining at table level. Even though these are not suuported by web UI but can be 
+set only using BQ command line. Alternatively we can set the partition expiration time by using the Alter statement.
+
+NOTE :
+When you explicitly provide the partition expiration using alter statement, then it overrides the partition expiration time set while you create a dataset
+or table.
+If you are not specifying it using the alter, then the partition expiration set while defining the table overrides the partition expiration set at dataset
+level.
+If partition expiration is not set explicitly or at table level, then dataset's default partition expiration is set.
+If you donot set default partition expiration at all, neither explicitly nor at dataset or table level, then the partitions never expire and you must delete
+them manually when it is not required anymore.
+
+Copying :
+1. Copying a partitioned table is same as that of a normal table but here when we copy a partitioned table, it goes and sits into a new partitioned table
+   and all the data, partitions, metadata are copied.
+2. You can copy a non-partitioned table into a partitioned table. In this case, BigQuery copied the source data into the partition representing the current
+   date.
+3. You can copy a partitioned table into a non-partitioned table as well. In this case, data is either appended or overwritten depending on your settings.
+4. You can copy multiple non-partitioned or partitioned tables into a target partitioned table. Doing this has few restrictions :
+	i> If you are copying multiple source tables into a partitioned table in the same job, the source table can't contain a mixture of partitioned and 
+	   non-partitioned tables.
+	ii> If all of the source tables are partitioned tables, then the partition specifications for all source tables must match the destination table's 
+            partition specifications.
+	iii> The source and destination tables must be in the datasets of same location. (Universal Rule)
+5. You can also copy selected partitions from source to destination.
+
+Best Practices for Partitioning :
+1. There must be a filter that only references a partitioned column so that partition elimination eligibility is considered.
+2. Try to avoid extra filters in the where clause with your main partition filter. If we have additional filter with an AND condition that is still fine to
+   limit the scan.
+3. Try not to include any expression using other columns in the filter.		--> where id + length(name) = 45; -- BQ will scan the full table cz of name
+4. Always use the pseudo column by itslef on the left side of the comparision meaning avoid putting the partitioned columns with some calculations.
+5. You should isolate the partitioned column while expressing a filter. It should not be used as a conditional check with other fields.
+6. You should not create too many partitions on a table. This will degrade the performance rather than enhancing it.
+
+
+
+* Clustering :
+Clustering or Bucketing is another data organizational technique like partitioning. It is technique for decomposing larger datasets into more managable
+ports. The basic fundemental of bucketing is that when a table is bucketed on a column, then all the records with same column value will go to the same 
+bucket. By doing this, you are basically colocating the related data.
+
+This helps in increasing query performance. If you query a table by giving filters on the partition column and the clustered column, then BigQuery would
+know where exactly the records are present, thereby reducing the scan required and thus reducing cost. The result returned also will be significantly faster
+but that difference can only be seen when the table is of very large size. If it is under 1GB then you will notice any such differences as partition alone
+can do the job.
+
+Unlike partition, a bucket is physically a file whereas partition is a sort of directory. Which record will go to which bucket is decided internally by a
+hashing algorithm.
+
+Clustering can be done on a normal table as well as a partitioned tables (partitioned-cluster table)
+
+When to use Partitioning, Clustering or Both :
+Partitioning - 
+1. When you need strict bytes processed and cost guarantees before running the query.
+2. Need to handle/manage the table at partition level for expiration, DML etc. Setting expiration at partition level deletes the partition but not the table
+
+Partitioning along with Clustering - 
+1. When you don't need strict cost guarantees before running the query.
+2. If the data is huge and there is a need to add more granularity in data organization.
+3. If the queries are mainly aggregation and filtering ones.
+
+Clustering -
+1. When your data is unique and doing partition will result in the formation of a large number of partitions.
+2. When your average partition size is falling below 1GB size.
+
+Creating a clustered table :
+All the steps to create a table sould be same. Additionaly the cluster setting needs to be configured.
+Under Clustering option, you need to give the column name(s) separated by comma on the basis of which you want to cluster the table. At max, you can give
+4 clustered columns separated by comma.
+
+Here, during the data load, BigQuery sorts the data using the values of mentioned clustering columns by the order in which the columns are mentioned in the
+Clustering settings and then organizes it into multiple buckets in BigQuery storage.
+
+Queries that filters on clustered columns perform better than that of non-clustered columns.
+
+Do's & Don't in Clustering :
+1. While querying a clustered table the filters must be applied in the same order as they were mentioned while creating the table.
+2. Do not use clustered columns in complex filter expressions. Use of functions, casting etc.
+3. Do not compare clustered columns to other columns. This was true in case of partition also.
+
+Quotas & Limitations : Clustered tables are subject to the limitations of partitioned tables only but with few extra additional limitations
+1. Only standard SQL is supported for querying and writing query results to cluster tables.
+2. Can modify/remove clustering columns but it will for new data only.
+3. Clustering columns must be top-level and non-repeating columns.
+4. Clustering columns should have one of the following types :
+	i> DATE
+	ii> BOOL
+	iii> GEOGRAPHY
+	iv> INT64
+	v> NUMERIC
+	vi> STRING
+	vii> TIMESTAMP
+5. Maximum of 4 clustering columns can be specified.
+
+
+
+* Load and Query External Data Sources in BigQuery :
+For querying and analysis, we don't always need the data in BigQuery. There are some situations, where we just need to query the data for some information 
+without loading it. Federated Queries are used to directly fire query on top of external data sources.
+
+The loading (ingesting in BigQuery) or linking (external) of the datasource depends on the option i.e. "Table type" - If you select Native, then it loads
+the data into BigQuery but if you select External, then it links the data from the external data source.
+Now, external tables are also of two types :
+1. Temporary tables - It is a table that is not created in BigQuery dataset and it cannot be shared with others as well. They are basically useful for one
+		      time querying over the external data. **
+2. Permanent tables - It is a table that is created in a BigQuery dataset and is linked to your external data source. Since they are permanent, they are 
+		      subject to expire as per the expiration time defined. They behave as normal BigQuery tables only which can be shared with others
+		      as well provided they have access to the underlying external data source. Since it is an external table and the data is not managed
+		      by BigQuery itself, you cannot preview the data stored in the table. Moreover if you write a query, it cannot give you an exstimated 
+		      byte scan. In additional to the data column, external tables contain an additional pseudo column to store the metadata of it's table.
+		      The pseudo column name is - "_FILE_NAME". This column contains the fully qualified path to the file to which the row belongs to. To
+		      query the pseudo column, you must use an alias.
+
+		      --> select *, _FILE_NAME as fn from `project.dataset.externaltable`;
+
+		      NOTE - This column is only available for tables that reference external data stored in Cloud Storage and Google Drive only.
+
+Limitations :
+1. BigQuery doesnot guarantee data consistency for external data sources.
+2. Query performance for external sources maynot be as high as querying native BigQuery tables. Moreover, the location of the external data source also 
+   effects the performance. Ex - Querying external data from Cloud Storage is faster then querying from Google Drive.
+3. You cannot write a BigQuery job that exports data from an external data source.
+4. You cannot reference an external data source in a wildcard table query.
+5. External data sources supports table partitioning and clustering in a limited way.
+6. Results are not cached when querying an external data source.
+7. Limited to 4 concurrent queries against a Cloud BigTable external data source.
+
+
+
+* Views :
+
+
+
+
+

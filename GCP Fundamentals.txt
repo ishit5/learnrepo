@@ -1,0 +1,167 @@
+* Why GCP : The most important reason to migrate to GCP is for its state of the art infrastructure of network. It has the largest network spread in the 
+	    world and is increasing day by day.
+	    Other important aspects are :
+	    Pricing - The pricing model is cheaper than other cloud providers. Google bills in minute as well as second level increaments and if the 
+		      services are used for a long period, it gives good amount of discounts as well. NOTE : There are a few scenarios where other clouds
+		      charges lesser than GCP for few of the services but in most cases the charges by GCP are less as compared to other providers.
+	    Customization - GCP allows wide range of customizations for any instance. In other providers, you won't get flexibility for customizations
+			    to that level.
+	    Scalability - Extreme level of Scaling is provided by GCP where as level of scaling is slightly less as compared to GCP.
+	    Live Migration - GCP is the only cloud provider which supports live migration of VMs.
+	    Big Data - GCP has an edge over other providers as it provides many in-built and pre-trained ML and AI services.
+
+* Cloud Computing : It is the on-demand availability of computer and system resources, especially data storage and compute power without direct active
+		  management by the user.
+
+
+* Cloud Journey :
+Buying -> Renting -> On-Demand
+
+
+* Cloud Computing Models :
+IaaS (Infrastructure as a Service) - The most basic category of cloud computing services. With IaaS, you rent IT infrastructure - servers and virtual
+				     machines (VMs), storage, networks, operating systems - from a cloud provider on a pay as you go basis.
+				     Ex - Leased Car
+PaaS (Platform as a Service) - Cloud computing services that supply an on-demand environment for developing, testing, delivering and managing software
+			       applications.
+			       Ex - Uber or Ola
+SaaS (Software as a Service) - This is an end application which is delivered over the internet, on demand and typically on a subscription basis.
+			       Ex - Bus
+Serverless - With serverless, the cloud service provider automatically provisions, scales and manages the infrastructure required to run the code. You don't
+	     need to setup an environment as well. If the code is supported, it is going to run on demand.
+
+
+* Cloud Market Leaders :
+Mainly there are 3 market leaders in the cloud business.
+1. AWS - Amazon Web Services, owned by Amazon. It has a head start of 5 years which means it is more mature and has largest market share in terms of cloud.
+	 It has per hour based pricing.
+2. Azure - Owned by Microsoft. It has great integration capabilities and since most of the organizations use Microsoft tools, Azure becomes very much easy
+	   for integration. It has per minute based pricing.
+3. GCP - Google Cloud Platform, owned by Google. This is the only cloud which has a growth rate of 100%. It has per 10 minute based pricing.
+
+
+* Core services provided by cloud market leaders :
+Services		AWS							Azure					GCP
+IaaS			Amazon Elastic Compute Cloud (EC2)			Virtual Machines			Google Compute Engine
+PaaS			AWS Elastic Beanstalk					App Service and Cloud Services		Google App Engine
+Containers		Amazon Elastic Compute Cloud Container Service		Azure Kubernetes Services		Google Kubernetes Engine
+Serverless Functions	AWS Lambda						Azure Functions				Google Cloud Functions
+
+
+* Accesing Google Cloud Console :
+Link to access google cloud console - console.cloud.google.com
+
+
+* Projects in Google Cloud :
+Google Cloud Project is the main object under which all the required google services run and are billed as per the usage.
+You can view all projects, create a new project, move or shut down an existing project (requires permission)
+
+
+* Google Services :
+To see all the core google services, click on the hamburger menu present in the left most part of the google console and there you will see a list of all 
+different types of services offered by Google.
+
+
+* IAM & Admin :
+Identity & Access Management allows you to control who can access or use what resources. This is for security of the project.
+
+
+* APIs & Services :
+
+
+* Cloud Shell :
+
+
+* Compute Services :
+Compute Engine - An IaaS service that provides configurable virtual machines (VMs) hosted on Google's infrastructure. Here you pay only for the compute
+		 seconds you use.
+App Engine - Fully managed PaaS service. It is a way to run code without worrying about the infrastructure. Mostly used for building web applications. 
+	     This also uses per second increment billing model.
+Kubernetes Engine - It is a Container as a Service (CaaS). Helps to run containerized applications in the cloud environment. It is fully managed auto 
+		    scale, auto upgrade & auto repair cluster manager and used for Cluster management and orchestration system for coordinating containers.
+Cloud Functions - It is a Function as a Service (FaaS). An event based, compute solution that allows you to create services that respond to the cloud events
+		  without requiring an explicitly managed server or a runtime environment. Billed only for the function's execution time meter to the 
+		  nearest 100 mili-seconds.
+Cloud Run - Develop and deploy highly scalable containerized applications on a fully managed serverless platform
+VMware Engine - Run your VMware workloads natively on Google Cloud
+
+
+* Storage Services :
+Cloud Storage - An unified object storage service, offering a spectrum of storage options including geo-redundant, regional, nearline (for data accessed 
+	  	less than once in a month) and coldline (for data accessed less than once in a year)
+		Parameters on which the cloud storage is charged :
+		i> The amount of data stored.
+		ii> The duration for which the data is stored.
+		iii> The number of operations you performed on the stored data.
+		iv> Network resources used when moving or accesing the data stored.
+Filestore - Fully managed network attached storage system for Compute Engine and GKE instances
+Data Transfer - This is used to transfer data to and from the cloud online. It has three service - Online Transfer, Transfer Service & Transfer Appliance
+NOTE : Persistent Disks are Block storages for VMs while Local SSDs are VM locally attached SSDs
+
+
+* Database Services :
+Cloud Bigtable - It is fully managed, Petabyte scale, low-latency, non-relational DB (NoSQL) bigdata DB service. Used for append only data (analytical data)
+Cloud Datastore - A NoSQL schema-less database for storing non-relational data. It is an alternative to Bigtable when ACID transactions are required. It
+		  has structured data but can be accessed with a NoSQL key-value pair mechanism
+Cloud Firestore - Serverless NoSQL document DB
+Cloud Memorystore - Managed Redis and Memcached DB (in memory datastore)
+Cloud Spanner - Horizontally scalable relational DB. Specially designed to combine the power of relational DB along with horizontal scale capacity of a 
+		non-relational DB. This helps delivering high-performance transactions with 99.999% availablity. Used when your datasets are huge (In TBs)
+Cloud SQL - Fully Managed Relational Database service for hosting MySQL, PostgreSQL, SQL Server DBs. Ensures that databases are reliable, secure and
+	    scalable so that you can use your time to focus on development rather than administration. It automates backups, replication, provisioning etc
+	    by ensuring greater than 99.95% availability. Used when your datasets are small (In GBs)
+
+
+* Big Data Services :
+BigQuery - Petabyte scale, Data Warehouse and Analytics solution
+BigQuery BI Engine - In-memory analytics engine
+BigQuery ML - BigQuery model training/serving
+Cloud Composer - Managed workflow orchestration service built on apache airflow (author, schedule and monitor jobs)
+Cloud Data Fusion - Graphically manage data pipelines (used to manage ETL and ELT data pipelines)
+Cloud Dataflow - Stream/Batch data processing
+Cloud Dataprep - Visual data wrangling (data cleaning and preparing structured and unstructured data)
+Cloud Dataproc - Managed Spark and Hadoop
+Cloud Pub/Sub - Global real-time messaging to send and receive between applications
+Cloud Datalab - Data exploration, analysis and visualization
+Data Catalog - Metadata management service
+Data Studio - Collaborative data exploration/dashboarding
+Looker - Enterprise BI and Analytics
+
+
+* Networking Services :
+Carrier Peering - Peer through a career
+Direct Peering - Peer with GCP
+Dedicated Interconnect - Dedicated private network connection (dedicated fiber network from your data center to GCP)
+Partner Interconnect - Connect on-prem network to VPC
+Cloud Armor - DDoS protection and WAF
+Cloud CDN - Content delivery network
+Cloud DNS - Programmable DNS serving
+Cloud Load Balancing - Multi-region load distribution/balancing
+Cloud NAT - Network address translation service
+Cloud Router - VPC/on-prem network route exchange 
+Cloud VPN - Virtual private network connection (High Availability)
+Network Service Tiers - Price VS Performance Tiering
+Network Telemetry - Network telemetry service
+Traffic Director - Service mesh traffic management
+Google Cloud Service Mesh - Service-aware network management
+Virtual Private Cloud - Software defined networking
+VPC Service Controls - Security perimeters for API based services
+Network Intelligence Center - Network monitoring and topology
+
+
+* AI Services :
+There are a lot of AI/ML services for different different purposes
+
+
+NOTE : 
+Creating Buckets - The name of the bucket should be globally unique across GCP
+
+
+* Bigdata processing related products :
+Input Data		Ingestion Layer			Processing Layer		Storage Layer			Visualization
+----------		--------------			---------------			-------------			-------------
+Compute Storage		Cloud Pub/Sub			Cloud Dataflow			Compute Storage			Google Sheets
+Cloud SQL		Compute Data Transfer		Cloud Dataproc			BigQuery			Cloud Data Studio
+Cloud Spanner		Cloud IOT Core			Cloud Dataprep			Cloud Bigtable			Cloud Datalab
+Cloud Datastore		Cloud Firestore											Looker
+Cloud Bigtable
