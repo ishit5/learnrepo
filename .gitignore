@@ -1,1 +1,2 @@
-OTHERS\*.txt
+#Folders to ignore :
+OTHERS/*
