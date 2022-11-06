@@ -900,6 +900,23 @@ Limitations :
 
 
 * Views :
+Views are virtual tables defined by SQL query on one or more table(s).
+They donot actually contain data. (Materialized views are different)
+They can be created by selecting any number of rows and coolumns of its base table(s).
+Once created, they become independent of it's base table schema. Any change in the base table schema won't reflect in the view.
+If you want to change the schema of the view, then you can do that by changing the underlying view definition query.
+Changing the view schema also doesnot effect the base table(s) schema.
+They are read-only and you cannot run any DML queries on them. (Insert, Update & Delete cannot be run over a view)
+Deleting the base table will make the view in-effective on that table. Any queries run on that view will fail.
+
+Advantages of view -
+1. Views are used to prevent direct access to table(s) for security reasons.
+2. Views can be used to hide/show limited data based on the type of the users.
+3. Views protect our base tables from being accidently dropped or altered.
+4. Views can help us create an abbreviation for a more complicated/complex query.
+5. Views doesnot have any storage cost.
+
+Creating a view -
 
 
 
