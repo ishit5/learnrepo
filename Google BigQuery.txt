@@ -917,6 +917,45 @@ Advantages of view -
 5. Views doesnot have any storage cost.
 
 Creating a view -
+Creating a view is very easy. You just need to write a query whose results you want to see in the view.
+Once you are done with the query, you don't need to run it to create the view. Just save it by proving project and dataset details under which you want 
+to save the view. It also asks for "Table name" which is nothing but the view name that you want to give to the view.
+NOTE : The dataset under which you are saving the view must have the same region as that of the source otherwise "Dataset not found" error will be returned
+
+When you create a view though UI, you cannot add label, description or expiration time during the view creation. All these properties along with editing 
+the existing SQL can be added/edited once the view is created. The same expiration rule of table applies to views as well.
+
+IMPORTANT - Always create a view in a different dataset from the dataset of the source table because views are created to restrict rows and columns and 
+	    hide crucial data and the access level permissions can be granted is in the dataset level. So, if you create a view in the same dataset, then 
+	    users will be able to see all objects (tables as well as views) which disregards the purpose of views since the intention was to hide crucial
+	    data in the first place.
+
+Copy & Rename operations on view - 
+Copying : Currently, you can copy a view only by using a cloud console. We have a "Copy View" button.
+Renaming : Currently, you donnot have any option to rename a view and so the workaround is you can copy the view with the new name and delete the old one.
+
+Restrict rows at user-level in views - 
+We already know that we can restrict rows and columns but in addition to that we can also restrict rows for specific users.
+This can be done by introducing a new column in the table which will contain the user who is allowed to access the row.
+After table setup, we can create a view on that table by comparing the current user who is firing the query with the user mentioned in the new column.
+For this, we need to use a system defined function - "SESSION_USER()" which returns the email id of the current user.
+--> select * from `project.dataset.table_with_user` where email = SESSION_USER();
+This helps in restricting access to row level based on different users.
+
+Limitations & Quotas -
+1. Dataset containing the view and the table must be in the same location.
+2. Data cannot be exported from a view.
+3. A standard SQL query cannot reference a view defined using legacy SQL syntax.
+4. You cannot reference query parameters in views.
+5. You cannot include a user-defined function in the view definition.
+6. You cannot reference a view in wildcard table query.
+7. You also cannot Preview the data of a view since it doesnot have data on its own.
+8. Maximum number of nested view levels - 16. (Nested view is view created from another view)
+9. Maximum number of views in a dataset - 2500.
+
+
+
+* Materialized Views :
 
 
 
