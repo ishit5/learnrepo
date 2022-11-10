@@ -956,8 +956,133 @@ Limitations & Quotas -
 
 
 * Materialized Views :
+Materialized views are query result of a table stored on disk.
+These views doesnot refer base tables each time you query it, rather the data in them are manually updated or with an auto-refresh mechanism.
+Normal views respons slower than Materialized views.
+
+Smart Tuning of BigQuery - If a query or sub-query on a table can be served with an already created Materialized view, BigQuery re-routes the query to use
+			   Materialized view for efficiency. Since the aggregations are precomputed and saved, it can give you results directly from there
+			   itself and also the bytes scan will be less and hense less cost.
+
+These are mostly used when you have queries that are to be used repeatedly from majorly ETL and BI pipelines.
+
+Creating Materialized views -
+To create a Materialized view, we need to write a DDL statement using standard SQL.
+Syntax -
+CREATE MATERIALIZED VIEW project.dataset_x.viewname AS
+SELECT Name, COUNT(Name) as NameCount FROM project.dataset_x.tablename GROUP BY Name;
+
+NOTE : Ticks are not used while creating Materialized views.
+
+Now, contrary to normal views, Materialized views are required to be created in the same dataset as where the base table exists because these are created
+for optimization and not for security purposes. These views implicitly inherits the expiration time of the base table and thus they expire synchronously.
+These views reference a single base table only unlike normal views that can have multiple base tables. Joins are not supported in case of Materialized 
+views. These views must have an aggregation field and it supports only a few aggregation functions which are - MAX, MIN, SUM, AVG, APPROX_COUNT_DISTINCT, 
+ARRAY_AGG, COUNT, HLL_COUNT.INIT. If you try to create a non-aggregated materialized view on a table, it will give an error. You cannot include HAVING
+clause in the view definition, it is unsupported. A computation on top of aggregation function is also not supported.
+
+Materialized views must contain only bare aggreagtion function without the use of having clause.
+
+Now, as soon as you run the "CREATE MATERIALIZED VIEW" query, unless you have disabled the auto-refresh, BigQuery starts an asynchronous full refresh for
+this view. The query might return success right away, but the initial refresh may still be running.
+Creation of partitioned or clustered Materialized View is also possible.
+
+Partitioned Materialized view can be created by using the same partition field with which the base table is partitioned.
+--> CREATE MATERIALIZED VIEW project.dataset_y.viewname PARTITION BY date AS
+    SELECT Name, COUNT(Name) as NameCount, _PARTITIONDATE as date FROM project.dataset_y.tablename GROUP BY 1, 3;
+
+Since, we know that BigQuery tries to search for a Materialized view compatible to the query ran and re-routes it for better performace but for some reason
+you don't want the re-route to happen, then you need to add a where condition in the query saying - "WHERE rand() < 1".
+
+Overall 3 costs are associated with Materialized views - 
+1. Cost of querying the Materialized view.
+2. Maintaining it, like for auto or manual refreshes.
+3. The disk storage cost.
+
+Altering Materialized views -
+A Materialized view can be manupulated by using CREATE, DROP or ALTER statements.
+
+Operations that are not allowed on a Materialized View are :
+1. Running Copy, Import or Export jobs where either the source or the destination is a Materialized view.
+2. Writing query results into a Materialized view.
+3. Using the BigQuery storage API.
+
+If you want to enable or disable the auto-refresh feature of Materialized view, you can do that by using alter operation.
+--> ALTER MATERIALIZED VIEW `project.dataset.viewname` SET OPTIONS (enable_refresh = true);
+
+Any other alter DDL statements other than SET OPTIONS, are not supported in Materialized views.
+
+Dropping Materialized views -
+DROP MATERIALIZED VIEW `project.dataset.viewname`;
+
+NOTE - If you delete the base table without deleting the Materialized view first, then any subsequent query fired on the view will fail along with failure
+       of auto-refreshes. If you re-create the base table with same name, then also you need to re-create the Materialized view.
+
+Conditions on which an adhoc query levereges the use of a Materialized view -
+1. Ad-hoc query contains the subset of grouping keys or aggregators of view definition.
+2. If the computation is done on the grouping keys but the aggregator is a part of the view.
+3. When the filters of the adhoc query is based on the grouping columns of the view or they are directly present in the view.
+4. When the filter in the adhoc query is a subset of filter used in the difinition of the view.
+
+Auto & Manual refreshes of the Materialized view -
+The refresh mechanism work as if the data in the base table is modified with updates, deletes and merge statements, then the entire data is re-read from 
+the base table (if it is a partitioned table, then only the effected partitioned data with modifications are re-read from the base table) but if the data
+is added (appended using inserts only), then only the delta is read from the base table and added to the Materialized view.
+
+If you want to do manual refresh of the Materialized view, then you need to use "REFRESH_MATERIALIZED_VIEW" system procedure.
+--> CALL BQ.REFRESH_MATERIALIZED_VIEW('project.dataset.viewname');
+When this procedure is called, BigQuery identifies the changes that has happened to the base table and apply all the changes to the view in the same way.
+
+ByDefault, Materialized views are auto-refreshed within 5 min of a change to the base table.
+So, if the table is frequently modified, then the cost of refresh will be quite high since the refreshes will also be very frequent but to control that
+as well, BigQuery provides a feature to put a cap on the refresh frequency. ByDefault, the refresh is not done more that what is defined in the system
+defined interval which is 30 minutes. You can alter the cap value based on frequency of modifications done on your base table.
+
+Setting refresh interval cap property of Materialized view -
+ALTER MATERIALIZED VIEW `project.dataset.viewname` SET OPTIONS (enable_refresh = true, refresh_interval_minute = 60);
+This will set the cap to 60 minutes.
+
+NOTE - Minimum refresh frequency cap can be set to 1 minute and the maximum cap is for 7 days.
+
+Limitations & Quotas - 
+1. You cannot copy a Materialized view either as a source or destination of a copy job.
+2. You cannot export data from a Materialized view.
+3. You cannot load into the view directly from a load query.
+4. You cannot write data into it using insert statement.
+5. You cannot run DML statements directly on Materialized view.
+6. It should be located in the same dataset where the base table exists.
+7. Supports a limited set of aggregation functions in the view definition query.
+8. It can reference only a single table and joins or unnest functionality cannot be used.
+9. Materialized views cannot be nested on other materialized views.
+10. You can use only the standard SQL dialect for these views.
+11. A maximum of 20 Materialized views can be created per base table.
 
 
+
+* Using BigQuery via command line, client libraries :
+Using BigQuery through web console is good for writing test or adhoc queries, scheduling tasks etc and that is mostly used by Data Analysts but for Data
+Engineers, knowing only the web console is not enough. Since Data Engineers are there to design and create data pipelines which loads or manipulates data
+comming from other applications, it is very much needed to learn how to write DDL, DMLs through programming in order to dump data or manipulate data in 
+the backend database which is BigQuery in this case.
+
+BigQuery has "Cloud Shell", under which you can run the queries using some command line which we are going to learn next (We need to Activate Cloud Shell)
+
+Now, most of the time data engineers will not have direct access to BigQuery and thus Cloud Shell is also something which Data Engineers will not be using
+as it is present in the Web Console itself. The other option is "Cloud SDK".
+
+Cloud SDK is a set of tools and libraries for interacting with Google Cloud Products. Basically it is a kind of local interface to access google cloud which
+mimics the cloud shell that we have here locally to your system. You just have to download the package, install it. There will be a one-time connectivity
+with your credentials and you are good to go.
+
+BQ Commands -
+1. bq show - displays what all projects present in the account
+2. bq show --dataset <projectname>:<datasetname> - displays the information about the given dataset
+3. bq show --schema <projectname>:<datasetname>.<tablename> - displays the schema information of the given table
+
+NOTE - Every command in BQ comes with it's own set of flags or options. These flags are classified into two types :
+       i> Global Flags - Can be used with any command
+       ii> Command-specific Flags - Used particularly for a command
+       These flags should be used in the order of global flags followed by the command specific flag
 
 
 
