@@ -1061,9 +1061,11 @@ Limitations & Quotas -
 
 * Using BigQuery via command line, client libraries :
 Using BigQuery through web console is good for writing test or adhoc queries, scheduling tasks etc and that is mostly used by Data Analysts but for Data
-Engineers, knowing only the web console is not enough. Since Data Engineers are there to design and create data pipelines which loads or manipulates data
-comming from other applications, it is very much needed to learn how to write DDL, DMLs through programming in order to dump data or manipulate data in 
-the backend database which is BigQuery in this case.
+Engineers, it is just the backend DW service to which they read & write and knowing only the web console is not enough. Since Data Engineers are there to 
+design and create data pipelines which loads or manipulates data comming from other applications, basically to create end to end data pipelines, it is very 
+much needed to learn how to write DDL, DMLs through programming in order to dump data or manipulate data in the backend database which is BigQuery in this 
+case. Usually Data Engineers are given a key which is "BigQuery Service Key" to read and write data into it. They don't access to these cloud tools instead
+they are given keys to access the tools that they need in order to build a pipeline.
 
 BigQuery has "Cloud Shell", under which you can run the queries using some command line which we are going to learn next (We need to Activate Cloud Shell)
 
@@ -1076,13 +1078,110 @@ with your credentials and you are good to go.
 
 BQ Commands -
 1. bq show - displays what all projects present in the account
-2. bq show --dataset <projectname>:<datasetname> - displays the information about the given dataset
-3. bq show --schema <projectname>:<datasetname>.<tablename> - displays the schema information of the given table
+2. bq ls - To list all the objects present under an entity (Entity can be anything - a project or a dataset)
+3. bq ls <datasetname> - To list all the objects under the given dataset
+4. bq show --dataset <projectname>:<datasetname> - Displays the information about the given dataset
+5. bq show --schema <projectname>:<datasetname>.<tablename> - Displays the schema information of the given table
+6. bq help - To get detailed information about the BQ command line tool
+7. bq help <command> - If you give query in the <command>, then it gives detailed information about all the BQ query commands
+8. bq cancel --job_id=<jobid> - This is used to cancel the job (jobid has to be passed as a flag value)
+
+Now, if the project and dataset IDs are the default values for your bq tool, then you can omit the project and dataset IDs.
 
 NOTE - Every command in BQ comes with it's own set of flags or options. These flags are classified into two types :
        i> Global Flags - Can be used with any command
        ii> Command-specific Flags - Used particularly for a command
        These flags should be used in the order of global flags followed by the command specific flag
+
+Any bq command can be divided into 3 parts :
+bq\
+--global_flag1=value\
+--global_flag2=value\
+command\
+--command_specific_flag1=value\
+--command_specific_flag2=value\
+dataset.table_name
+
+The full command can be written in one single line but for better readability, it can be written in multiple lines using backslash in the end of every line
+
+Command arguments can be specified in one of the following ways :
+--flag=argument
+--flag='argument'
+--flag="argument"
+--flag argument
+--flag 'argument'
+--flag "argument"
+
+List of global flags -
+1. --location - specifies the location where all the commands written will be run
+2. --format - specifies the format of the command's output
+	i> pretty - formatted table output
+	ii> sparse - simpler table output
+	iii> prettyjson - easy-to-read json format
+	iv> json - compact json
+	v> csv - csv format with header
+	NOTE - pretty, sparse and prettyjson are intended to be human-readable whereas json and csv are used to pass it to a different program.
+3. --job_id - used to explicitly provide a unique job id to use for the request written in command
+	NOTE - This flag applies only to commands that create jobs like cp, extract, load and query.
+
+If you don't want to use bq repeatedly, start the bq shell first and then write commands without using "bq" - "bq shell" and to exit the interactive mode
+type - "exit"
+
+To fire a SQL query, run the command "bq query" and since we are going to write standard SQL query, the flag to be used is "--use_legacy_sql=false". This
+setting is to switch to standard and legacy sql. Default value is true for this flag, means it expects legacy SQL query. Thus, setting this flag to false
+is mandatory before using standard SQL.
+
+--> bq query --use_legacy_sql=false SELECT * FROM `project.dataset.table`
+
+Now, all the settings that we use in BigQuery web console UI, can be used here as well with the help of flags.
+Few of the flags - (1 to 16 -> boolan flags, 17 to 19 -> non-boolean flags, 20 to 22 -> Flags related to legacy SQL)
+1. --append_table - Boolean flag, used to append the results to a table.
+2. --destination_table - Table where to write the query results.
+3. --replace - Flag to overwrite the destination table with query results. It's default value is False and can be set to True.
+4. --destination_schema - If the destination table is not present, it will get created with the specified schema.
+5. --time_partitioning_field - If you want to partition the destination table on some time, then set the --time_partitioning_field. Provide any date/time
+			       column from your data on which you want to do the partitioning.
+6. --time_partitioning_type - You can set this flag for ingestion time-based partitioning. It's value can be Day, Hour, Month or Year.
+7. --time_partitioning_expiration - You can set the partition expiration while creating or writing data into destination table using the flag. Set an 
+				    integer value in seconds to when a partition should be deleted. Negative numbers indicate no expiration.
+8. --clustering_fields - Specify upto 4 comma-separated columns on which you want to cluster the destination table.
+9. --destination_kms_key - If customer wants to encrypt the destination table with it's own key, then provide the resource id of the key here.
+10. --batch - Keep this to true if you want the query to run in batch mode and not the default interactive mode.
+11. --maximum_bytes_billed - It is to limit the bytes billed for query.
+12. --label - Flag to apply labels to a query job in the form of key value pairs. If you wish to pass multiple key value pairs, then repeat this flag.
+13. --dry_run - This boolean flag acts as a validator for the command. When specified, the query is validated but not run. The output will let you know
+		if the query is valid or not along with the number of bytes it will process. By Default, it is True.
+14. --max_rows - Integer specifying the number of rows to an integer specifying the number of rows to return in the query result. It's default value is 100.
+15. --require_cache - This was missing in cloud console. If this is specified as True, then the query will only run if the results can be retrieved from
+		      the cache otherwise not. By Default, it is set to False.
+16. --use_cache - This is set to False, if you don't want the current query to use the cached results.
+
+17. --schedule - Makes a recurring scheduled query. --> --schedule='every 24 hours'
+18. --display_name - Name given to the schedule.
+19. --target_dataset - Write scheduled query results into the destination. This is an alternative way to name the destination target table to write query
+		       results into. Either "--destination_table" flag or "--target_dataset" flag can be used at a time.
+
+20. --allow_large_results - When specified to True, it enables large destination table sizes for legacy SQL queries.
+21. --flatten_results - Boolean field to have the results of nested and repeated fields in an already falttened format.
+22. --udf_resource - This flag will contain the cloud storage path to a local udf code file. Once the query is run, that load file is loaded and evaluated
+		     immediately as a User-Defined function used in Legacy SQL query. This flag can be repeated multiple times if you have multiple udfs.
+
+NOTE : The BigQuery flags can be used in another way by adding no at the begining of the flag without using flag value FALSE
+       The same "--use_cache=false" can be written as "--nouse_cache"
+       All the boolean flags can be written in this way.
+       Difference of running query in cloudshell and in local SDK - In Cloud Shell, the sql query is written in single quotes but in local SDK, those quotes
+       can be removed or it can be written in double quotes.
+       In Cloud SDK, the flags works well with space only and not with an end line.
+
+
+
+* Creating Dataset from BQ commands : 
+To create any entity using BigQuery command line, use mk command. "mk" stands for make. Any dataset, table, view, materialized view to be created can be 
+done using "mk" command. If you omit the flag, by default this command creates a dataset. You can directly provide dataset name after 
+--> mk --dataset 
+
+
+
 
 
 
