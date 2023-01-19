@@ -1177,8 +1177,8 @@ NOTE : The BigQuery flags can be used in another way by adding no at the beginin
 
 * Creating Dataset from BQ commands : 
 To create any entity using BigQuery command line, use mk command. "mk" stands for make. Any dataset, table, view, materialized view to be created can be 
-done using "mk" command. If you omit the flag, by default this command creates a dataset. You can directly provide dataset name after 
---> mk --dataset 
+done using "mk" command. If you omit the flag, by default this command creates a dataset. You can directly provide dataset name after the "mk" command
+--> mk --dataset  
 
 
 
