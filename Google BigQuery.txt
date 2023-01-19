@@ -1177,11 +1177,90 @@ NOTE : The BigQuery flags can be used in another way by adding no at the beginin
 
 * Creating Dataset from BQ commands : 
 To create any entity using BigQuery command line, use mk command. "mk" stands for make. Any dataset, table, view, materialized view to be created can be 
-done using "mk" command. If you omit the flag, by default this command creates a dataset. You can directly provide dataset name after the "mk" command
---> mk --dataset  
+done using "mk" command. If you omit the flag, by default this command creates a dataset. You can directly provide dataset name after the "mk" command.
+--> bq mk --dataset <project_name:dataset_name> OR bq mk -d <project_name:dataset_name> - To create the dataset. project_name can be skipped if the dataset
+											  needs to be created under the current selected project.
+
+Few optional parameters while creating dataset :
+1. --default_table_expiration <time_in_sec> - This time is set in seconds and the minimum value to be provided is 3600 sec. If table expiration date is set,
+					      then this value is ignored.
+2. --default_partition_expiration <time_in_sec> - We could not set it up in cloud console but In CLI, we have the option to set the default partition 
+						  expiration of the dataset while creating and it has no minimum value. Any partition created in the 
+						  partition table of this dataset will be deleted after specified sec from the partition creation timestamp.
+						  Again, we know that the table level partition expiration takes presidence over the dataset level default
+						  partition expiration.
+3. --description "<any_description>" - To provide description for the dataset created.
+4. --default_kms_key "<encryption_key>" - This is to provide the custom encryption key's resource id.
 
 
 
+* Creating all types of table using bq command line :
+To create the table, the command is still "mk" but the flags are changed.
+--> bq mk --table <project_name:dataset_name.table_name> OR bq mk --t <project_name:dataset_name.table_name> - To create a table. Again project_name can be
+													       be skipped if the table is created under the
+													       the selected project.
 
+Few optional parameters while creating table :
+1. --expiration <time_in_sec> - This is to set the table expiration.
+2. --description "<any_description>" - This is to provide description of the table created.
+3. --label <key:value> - Any labels in the form of key-value pair. Repeat this flag if you want to provide multiple labels.
+4. --require_partition_filter=<boolean_value> - If you strictly want the query to use a where clause on the partitioned column. By default it is false.
+5. --time_partitioning_type <value> - This can be used only with ingestion type time partitioning table. "value" can be DAY, MONTH, YEAR etc. If nothing
+				      is specified, then it defaults to DAY partitioning.
+6. --time_partitioning_expiration <time_in_sec> - If you set a partiotion's expiration that is longer than the table's expiration, then the table's
+						  expiration takes presidence as it makes sense.
+7. --time_partitioning_field <column_name> - This can be used with datetime-column based partitioning table. Here, you need to provide the column name on
+					     which you want to do the partitioning.
+8. --range_partitioning <column_name,start,end,interval> - This can be used with integer-column based partitioning table. Set the values of this flag in 
+							   the sequence of column_name, start, end and interval.
+9. --clustering_fields <field_name> - This can be used while creating cluster tables.
+10. --schema - Table schema information can be supplied in-line or via JSON schema file.
+	       Example for in-line schema :
+	       --> --schema name:string,gender:string,count:integer
+	       Example for schema via JSON :
+	       --> --schema <path_of_the_json_file>
+
+NOTE : When you provide a schema on command line, you cannot specify record_type, column_description and column's_mode. All modes defaults to NULLABLE. In
+       order to include all of it, supply a JSON file instead. Now, in order to create a table schema using JSON, first we need to create a JSON which is
+       shown below :
+       {
+	   {
+		"description": "name",
+		"mode": "REQUIRED",
+		"name": "name",
+		"type": "STRING"
+	   },
+	   {
+		"description": "name's gender",
+		"mode": "NULLABLE",
+		"name": "gender",
+		"type": "STRING"
+	   },
+	   {
+		"description": "total count of that name",
+		"mode": "NULLABLE",
+		"name": "count",
+		"type": "INTEGER"
+	   }
+       }
+       The JSON file must be stored in the local and not in cloud storage or any other remote location and you need to pass the path where the JSON is kept.
+
+
+
+* Loading data into table using command line :
+"load" command is used to load the data into an empty table. It needs the table_name to be loaded and it's schema.
+--> bq load <project_name:dataset_name.table_name> <path_of_the_file_that_needs_to_be_loaded> <schema>
+Here, schema can be typed in-line or it can be passed as JSON file too. Also note that if the table is not already created, then it creates and then loads
+the data from the file into the table. "project_name" can be skipped if the loading needs to be done in the selected project. You can pass the autodetect 
+flag (--autodetect) as well instead of supplying the schema.
+
+
+
+* Exclusive operations of BigQuery CLI : There are some oprerations which are not allowed from UI console and are only possible via CLI -
+1. Relaxing a column mode to NULLABLE - If a column in table has REQUIRED mode already set, then the mode can be changed to NULLABLE via CLI using the 
+					"schema_update_option" flag in query or load command. This option is useful when you append or overwrite data to
+					a table or partition. The value of this flag updated the mode of the column in the destination table. There can be
+					two values for this flag - ALLOW_FIELD_ADDITION & ALLOW_FIELD_RELAXATION.
+--> bq load --schema_update_option ALLOW_FIELD_RELAXATION <project_name:dataset_name.table_name> <path_of_the_file_to_be_uploaded> <schema>
 
 

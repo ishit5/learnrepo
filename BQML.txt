@@ -1,0 +1,125 @@
+
+
+** Linear Regression - 
+It is one of the easiest and most popular ML Algorithms which is based on supervised learning. It uses labeled datasets to train the models that can be
+used for prediction outcomes.
+
+Regression is a method of modeling a target value based on independent predictors. It is used to find out the relationship between the dependent variable
+and the independent variables. If that relationship is linear, then it is known as Linear Regression model.
+
+Linear Regression is a statistical model where the independent and dependent variables has a linear relationship.
+The term "Linear" in statistics means a straight line.
+
+Independent Variable - These are the variables whose value doesnot change by the effect of other variables. Denoted by "x".
+Dependent Variable - These are the variables whose value gets changed by the effect of the other variables. Denoted by "y".
+
+The main aim in linear regression is to draw a line which is very close to all the data points.
+This best fit line is calculated by an equation : y = m*x + c
+
+In the equation, 
+y = dependent variable
+x = independent variable
+m = slope of the line (y2-y1)/(x2-x1)
+c = coefficient of the line
+
+Now, while predicting the value, there is an error term as well that is associated with the equation and thus the equation finally becomes :
+y = m*x + c + e				--> Here, e = error (difference between the actual value and predicted value in the line)
+
+The main goal is to reduce the error and to draw a best fit line which covers or is close to all the data points.
+
+The best fit line should have the least sum of squares of the errors, also known as "e square".
+
+Applications of Linear Regression :
+1. To evaluate trends and make estimates or forecasts
+2. Future price prediction in retail or real-estate industry
+3. Crop yield prediction in the Agriculture field based on the amount of rainfall happened
+4. Assess risk in financial services and insurance domain
+
+
+
+** CREATE LINEAR REGRESSION MODEL :
+The syntax to create a model in BQ is similar to create table statement -
+
+CREATE MODEL  |  CREATE MODEL IF EXISTS  |  CREATE OR REPLACE MODEL 
+<model_name>
+TRANSFORM (options)		--> optional
+OPTIONS (model_option_list)
+AS query_statement
+
+Example -
+
+CREATE OR REPLACE MODEL demo_model
+TRANSFORM (ML.FEATURE_CROSS(STRUCT(f1, f2)) as cross_f,
+	   ML.QUANTILE_BUCKETIZE(f3) OVER() as buckets,
+	   label_col)
+OPTIONS (model_type = 'linear_reg', input_label_cols = 'label_col')
+AS SELECT * FROM `project.dataset.demo_table`;
+
+Here, "options" is where you provide the algorithm name and it's corresponding parameters. At minimum, model_type parameter is mandatory and the other
+options provided under the "options" depends on the type of model selected. All options are provided as comma-separated. The "transform" section is 
+optional and one can opt-out if they don't need to do any pre-processing of the data during model creation. One important thing to note about the 
+"transform" clause is that, when it is present, only output columns from the transform clause are used in training. Any results from the select query that
+don't appear in the transform clause are ignored. Also during prediction, you don't need to pre-process the input again and the same transformations are 
+automatically restored. Now, if the same transformation is done in the select sql statement after AS clause, then in that case you explicitly have to 
+convert the prediction dataset into that format. Functions thats are not allowed inside of the "transform" clause - Aggregation functions, Non-ML analytic
+functions, UDFs & Sub-Queries. After "AS" keyword, the sql statement is used to generate the training data.
+
+The value of model_type can be :
+LINEAR_REG
+LOGISTIC_REG
+KMEANS
+PCA
+MATRIX_FACTORIZATION
+AUTOENCODER
+AUTOML_REGRESSOR
+AUTOML_CLASSIFIER
+BOOSTED_TREE_CLASSIFIER
+BOOSTED_TREE_REGRESSOR
+DNN_CLASIFIER
+DNN_REGRESSOR
+DNN_LINEAR_COMBINED_CLASSIFIER
+DNN_LINEAR_COMBINED_REGRESSOR
+ARIMA_PLUS
+
+Limitations of create model statement :
+1. When you use a create model statement, the size of the model must me 90MB or less, otherwise the query fails.
+2. About feature cardinality, generally for string categorical variables, if your string categorical variables are short strings, a total model dimension 
+   of 5 - 10 million is supported. Meaning a total of 5 - 10 million of unique values are allowed for string features.
+3. The "label" column cannot have NULL values, otherwise the query fails. It is column taken by default which is considered for prediction.
+4. Only 10,000 create model statements can be run per project per day.
+
+Options present for model tuning in Linear Regression :
+1. INPUT_LABEL_COLS <string_array> - This can be provided as an array of string. This option contains the label column names in the training data which
+				     basically are the target variables whose values are to be predicted. Only Linear/Logistic regression model types
+				     support string_array input with only one element. If you don't provide this option, then by default "label" column
+				     is considered. If there is no column as label or in the output of transform clause, then create model query is going
+				     to fail.
+2. DATA_SPLIT_METHOD <'RANDOM' | 'CUSTOM' | 'SEQ' | 'NO_SPLIT' | 'AUTO_SPLIT'> - While preparing data for model training and evaluation, the input data is
+										 split into 2 parts, usually in 80-20 or 70-30 ratio out of which the 
+										 bigger chunk is used for model training and the smaller part is used for
+										 model evaluation.
+	i> RANDOM - It splits the data randomly. It is deterministic meaning different training runs produce the same split results if the underlying
+		    training data is same.
+	ii> CUSTOM - It split the data based on user preference. This strategy uses an additional customer provided column of type boolean. The rows with 
+		     the value of TRUE are used for evaluation and the rows with the value of FALSE are used for training.
+	iii> SEQ - It is also a custom strategy based on an additional user provided column which can have any orderable data type. This can be NUMERIC, 
+		   BIGNUMERIC, STRING or TIMESTAMP. The rule used to split the data in this strategy is all the rows with split values less than the 
+		   threshold value are used for training and the remaining rows including NULLS are used for evaluation.
+	iv> NO_SPLIT - This doesnot split the data and the whole dataset is used as training data.
+	v> AUTO_SPLIT - This is used by-default by BigQuery if there is no strategy set explicitly by the user. It automatically selects one of the data
+			split strategies discussed above based on some criteria.
+			* Less than 500 rows --> NO_SPLIT (All rows are used for training)
+			* Between 500 & 50,000 --> RANDOM (80% training - 20% evaluation)
+			* More than 50,000 rows --> RANDOM (10,000 rows for evaluation)
+
+NOTE : To set the additional column for CUSTOM & SEQ or to set the threshold for SEQ, there are separate options which needs to be set accordingly.
+
+3. DATA_SPLIT_EVAL_FRACTION <float64> - This is used with CUSTOM & SEQ data split methods. It specifies the fraction of data used for evaluation with
+					accuracy upto 2 decimal places. You can provide any float value from 0 to 1 and if not set, it defaults to 0.2
+					which means 20% of the data will be used for evaluation.
+4. DATA_SPLIT_COL <string> - This is also associated with CUSTOM & SEQ data split strategy. This is the option where you set the column name based on
+			     which the data split is done. When the method is CUSTOM, then the data type for the split column should be of boolean type.
+			     When the method is SEQ, then DATA_SPLIT_EVAL_FRACTION & DATA_SPLIT_COL work in conjunction. SEQ split strategy is mostly used
+			     when you want to evaluate your models for a certain date or within a time range. It first sorts the data based on the time 
+			     column in ascending order and then based on the value provided in DATA_SPLIT_EVAL_FRACTION, last x% of rows (recent time rows)
+			     goes into evaluation and the remaining rows goes for training.
