@@ -56,7 +56,7 @@ OPTIONS (model_type = 'linear_reg', input_label_cols = 'label_col')
 AS SELECT * FROM `project.dataset.demo_table`;
 
 Here, "options" is where you provide the algorithm name and it's corresponding parameters. At minimum, model_type parameter is mandatory and the other
-options provided under the "options" depends on the type of model seleceted. All options are provided as comma-separated. The "transform" section is 
+options provided under the "options" depends on the type of model selected. All options are provided as comma-separated. The "transform" section is 
 optional and one can opt-out if they don't need to do any pre-processing of the data during model creation. One important thing to note about the 
 "transform" clause is that, when it is present, only output columns from the transform clause are used in training. Any results from the select query that
 don't appear in the transform clause are ignored. Also during prediction, you don't need to pre-process the input again and the same transformations are 
@@ -85,7 +85,7 @@ Limitations of create model statement :
 1. When you use a create model statement, the size of the model must me 90MB or less, otherwise the query fails.
 2. About feature cardinality, generally for string categorical variables, if your string categorical variables are short strings, a total model dimension 
    of 5 - 10 million is supported. Meaning a total of 5 - 10 million of unique values are allowed for string features.
-3. The label column cannot have NULL values, otherwise the query fails. It is column taken by default which is considered for prediction.
+3. The "label" column cannot have NULL values, otherwise the query fails. It is column taken by default which is considered for prediction.
 4. Only 10,000 create model statements can be run per project per day.
 
 Options present for model tuning in Linear Regression :
