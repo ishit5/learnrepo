@@ -3,8 +3,10 @@ It allows you to distribute the file changes over time. Also prevents from data 
 structures.
 
 
+
 * GitHub - It is an application allowing you to store remote repositories. You can interact with your repositories through pull/push system on your local 
 machine. It allows multiple people to see and interact with the repository.
+
 
 
 * Terminal basic commands :
@@ -18,6 +20,7 @@ touch <file_name_with_extension> - creates a file with the specified name in the
 rm <file_name_with_extension> - removes the mentioned file from the current directory (rm removes the file but flag -rf can be used to remove the folder)
 
 
+
 * Workflow Terminologies :
 Repositories are also called Repos, store the full history and source control of a project
 They can either be hosted locally or on a shared server such as GitHub
@@ -26,14 +29,17 @@ Any repo which is stored somewhere but not in local, is called as remote reposit
 Directories or Working Directory is usually referred to the project in current state of time
 
 
+
 * Actual Workflow :
 Working Directory -> (pull request) -> Code in local directory (Make Changes) -> Add/Remove Files from Staging Area <--> Staging Area -> Commit -> Push
 Changes to the Working Directory
 
 
+
 * Creating a new repository :
 Untill and unless you initialize the git folder (meaning you tell git that this is my git repository), you cannot use any git command and if you use, it 
 will not recognize if it is not initialized. The command to initialize : git init
+
 
 
 * Adding and Removing Files from Staging Area :
@@ -44,6 +50,7 @@ To add multiple files together at once in the Staging Area, the command to use i
 the deleted files. In order to confirm you again have to do git add . so that it reflects the same in the terminal
 To remove a file from the Staging Area that you don't want to track, the command to use is : git rm --cached <file-name-with-extension>
 To remove a file completely from the repository (force remove), the command to use is : git rm -f <file-name-with-extension>
+
 
 
 * Commit :
@@ -65,6 +72,7 @@ If you have many commits and you want to list them all, then the command to use 
 It lists all the commits with the id and message in oneline
 
 
+
 * Checkout :
 If you want to go back in time and see the changes that were done previously, you can do that by using the checkout feature
 This doesnot mean that the latest changes are erased, we can again come back to the latest commit
@@ -72,6 +80,7 @@ In order to move back in time and see the changes for any particular commit, we 
 The command is : git checkout <commit_id>
 After you run the command, you will notice that the head will not be pointing to the master which signifies that you are not looking in the latest commit
 In order to come back to the latest commit, use command : git checkout master
+
 
 
 * Revert :
@@ -84,6 +93,7 @@ Command to use revert :
 git revert <commit_id>
 
 Once you press enter it asks for a message
+
 
 
 * Reset :
@@ -101,6 +111,7 @@ Once you press enter, the head will move to the commit that has been provided wh
 that commit. (It becomes the master)
 
 
+
 * .gitignore : 
 This helps to ignore files or folders that you don't want to track permanently
 In order to do that - you have to create a file .gitignore and there you have to list down all the files or folders that you don't want to track
@@ -116,6 +127,7 @@ NOTE : The changes in the untracked files will keep coming unless the .gitignore
        --> git rm -r --cached .
 
 
+
 * Branches :
 Branches are a separate chain of commits which helps to create a separate development path without overriding or creates copies of your project
 They can be added, deleted and merged
@@ -127,6 +139,7 @@ They can be added, deleted and merged
 
 Commiting a branch is same as how we commit in master branch and when you check the log you will see the HEAD will be pointing to the branch in which you 
 are making commits on.
+
 
 
 * Merging Branches :
@@ -143,6 +156,7 @@ git merge dev						--> merging changes from "dev" branch into "master" branch
 NOTE : After merging, the HEAD will point to master, dev since both are at same timeline now (in-sync)
 
 
+
 * GitHub :
 GitHub is a cloud repository that is managed with small commands and together with git it becomes a very powerful tool with a backup that you don't have
 to get concerned for.
@@ -154,8 +168,10 @@ iii> Easy access from any device in any location
 iv> Industry standard for hosting Git repositories
 
 
+
 * Creating a new repo in github :
 After account creation is done, go to myProfile and there under Repositories tab, you will get the option to create a new repo
+
 
 
 * Other Repositories :
@@ -165,6 +181,7 @@ Fork - This creates a copy of the repo to your own account (That repo can be cal
 Clone - Cloning takes the repo and creates a copy in the local machine from where you can interact with the repo directly
 Download - Downloading means copying the entire contents of the directory as a zip file (doesnot get the git properties - meaning if you run any git
 	   command, it is not going to recognize)
+
 
 
 * Connecting Git & Github :
@@ -177,10 +194,12 @@ Now, both git and github repositories are connected
 To check if the connection is proper : git remote -v
 
 
+
 * Pulling & pushing latest information from & to master branch in Github :
 In order to pull latest data from Github, use command - git pull origin master
 In order to push latest data into Github, use command - git push -u origin master
 NOTE : -u is to remember and track the branch, thus there is no need to mention name of the branch while pulling or pushing from the next time
+
 
 
 * Creating, pulling & pushing latest information from & to other branch in Github :
@@ -195,10 +214,23 @@ once it is merged, deleting branch from git (local) - git branch -d <branch_name
 deleting branch from github (remote) - git push origin --delete <branch_name>
 
 
+
+* Merge Conflict :
+When you try to pull data from remote which has a few new commits already but in local you don't instead you have some other commits that is not present
+in remote, then the conflit arrises and when it comes, you need to manually resolve it by opening the local file and selecting the part that you want to 
+include in the pull request that you have made. In order to abort the merge the command to use --> git merge --abort 
+
+
+
+* Git Rebase :
+
+
+
+* Git Cherry-pick :
+
+
+
 * Alternate ways to use git and github (SourceTree) :
 SourceTree is a git GUI which allows you to interact with your repositories through a graphical interface
 It uses all the core git commands but are executed through icons and buttons instead of terminal commands
 It is an alternative to the terminal when using git
-
-
-* Git Rebase :

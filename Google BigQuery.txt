@@ -194,6 +194,7 @@ It has the capability to process large amounts of data within seconds.
 
 
 
+
 * Advantages -
 i> Both batch and stream data ingestion is possible through BigQuery. It has the capability to store 100000 rows of streaming data per second and TB of
 batch data per second
@@ -203,6 +204,7 @@ iv> Pricing model is on-demand (pay as you go). Also results are cached and thus
 will be available to you witin 0-sec
 v> Provides automated data transfer mechanism on a scheduled and full managed basis
 vi> Simplifies the use of operation with the help of IAM (Identity & Access Management) to control the access for particular users
+
 
 
 
@@ -218,6 +220,7 @@ vii> Provides rich monitoring, logging and alerting through Cloud Audit Logs
 viii> Allows quering from the external data sources without even ingesting in BigQuery (knows as "Federated Queries")
 ix> Allows you to run open source data science workloads
 x> Google cloud offers a powerful data repository of more than 100 high-demand datasets from different industries
+
 
 
 
@@ -244,10 +247,12 @@ With the architecture and design of the BigQuery, you can see that why it is cap
 
 
 
+
 * BigQuery Project Setup -
 On top we have projects and from there we can create a new project as well.
 Under Project we have Datasets which are nothing but folders or a place where tables are stored as files.
 Under Dataset we have Tables where we store the information.
+
 
 
 
@@ -290,6 +295,7 @@ Quotas & Limits :
    datasets also becomes slower.
 2. No of tables that can be created are also unrestricted but as soon as you approach 50000 tables, enumerating them becomes slower.
 3. Maximum 2500 authorized views can be created.
+
 
 
 
@@ -345,6 +351,7 @@ Quotas & Limits :
 
 
 
+
 * Running Queries :
 By default, when you run queries in BigQuery, it uses BigQuery engine to process the data which is a batch process (data is processed in batch)
 When you want to process streaming data and not batch data, then Cloud Dataflow engine will come into the picture
@@ -352,6 +359,7 @@ NOTE : Both of the above options are present in the Query Settings option
 By default, BigQuery saves all query results into a temporary table. You can change this setting and save the result into a permanent table as well by
 using the "Query Settings" option. These temporary tables are responsible for caching the query results. The temporary tables remain active in BigQuery
 environment for approximately 24 hours.
+
 
 
 
@@ -364,6 +372,7 @@ environment for approximately 24 hours.
 6. Results are not cached when the queries are run against external data sources like BigTable or CloudStorage
 7. Results are cached for the result set which are smaller than maximum response size (i.e 10 GB compressed size by default)
 8. A Byte limit can be set for cost control. If the query uses more bytes to process than specified amount, it will fail without incurring any charge
+
 
 
 
@@ -392,12 +401,14 @@ Longer prefixes perform better than shorter ones because in shorter ones, it has
 
 
 
+
 * Schedule Query :
 This is used when you want to run the same query on a recurring basis
 This uses the feature of BigQuery Transfer Service (You need to enable the Transfer API to use this service)
 
 Scheduling a backfill run - A backfill is used when a scheduled query is failed and you need to run the same query to get the data for an older time 
 			    period. 
+
 
 
 
@@ -408,6 +419,7 @@ You get two options while saving a query :
 2. Project - Visible to all members of the project that is set through IAM
 Once you save a query in project level, you get a sharable link of the query
 NOTE : The link will only show the query text, the member who is looking into the query will still need appropriate permissions to run the query
+
 
 
 
@@ -426,6 +438,7 @@ Auto detection recognizes the following :
 4. can detect endline character but if it is in quotes (like - "/n"), then it considers as string and not endline
 5. auto detection assumes the date in the format - "YYYY-MM-DD". If the format is different, it takes it as string
 6. during auto-detection, the mode for the columns are taken with default value i.e. NULLABLE
+
 
 
 
@@ -504,6 +517,7 @@ You can make use of the concepts of NESTED & REPEATED, when your data naturally 
 
 
 
+
 * Operations on Datasets & Tables :
 Giving access controls to the new members for a dataset - As of now, you cannot give permissions on table, view or role level but you can give access 
 controls in dataset level or column level by using BigQuery Column level security. In order to check the permissions, select the dataset and then select 
@@ -526,6 +540,7 @@ want to overwrite the data from the source dataset.
 
 NOTE : If there is already a table present in the destination dataset which is same as what is present in the source and if the source table has not 
 changed from the last copy, then that table in the destination dataset will be skipped during copying even if overwrite destination option is checked.
+
 
 
 
@@ -570,6 +585,7 @@ Limitations -
 
 
 
+
 * Native operations on table for Schema change :
 Copying tables are very simple and the steps to copy table is same as the way we copy dataset. Only thing to consider is that the source and the destination
 dataset must be in the same location.
@@ -607,6 +623,7 @@ trying to append the data in the existing table, we must have to provide the sch
 
 
 
+
 * Table data recovery :
 You can restore the deleted data of a table within 7 days of deletion using either table decorators or using "SYSTEM_TIME AS OF" in the from clause.
 After 7 days, it is not possible to undelete a table using any method. You can restore the state of your table at any point of time within last 7 days.
@@ -615,6 +632,7 @@ You need to provide a timestamp value for which you want to the see the data for
 --> select * from `project.dataset.table` FOR SYSTEM_TIME AS OF TIMESTAMP_SUB(CURRENT_TIMESTAMP(), INTERVAL 1 HOUR)
     This will show you the state of the table one hour before of the current timestamp. Now, if you want to recover it, from the query settings change the
     destination to the same table and provide write preference as Overwrite.
+
 
 
 
@@ -640,6 +658,7 @@ NOTE : A Slot in BigQuery is the unit of computational capacity required to exec
 Bytes shuffled - The number of bytes shuffled between stages. Lower the better.
 Bytes spilled to Disk - If the data that is to be shuffled is huge, not everything can be shuffled in memory and in that case BigQuery tends to write
 			it to a disk. This parameter shows the bytes that are written to the disk.
+
 
 
 
@@ -753,6 +772,7 @@ Quotas & Limitations :
 
 
 
+
 * Managing partitioned tables using DML statements :
 Partitioned tables are no different than non-partitioned tables and thus you can perform all the DML operations, setting expiration date of the table and 
 other things as you do it for normal tables. But in addition to those, in partitioned tables, we can set expiration for the partitions using a DDL statement
@@ -803,6 +823,7 @@ Best Practices for Partitioning :
 4. Always use the pseudo column by itslef on the left side of the comparision meaning avoid putting the partitioned columns with some calculations.
 5. You should isolate the partitioned column while expressing a filter. It should not be used as a conditional check with other fields.
 6. You should not create too many partitions on a table. This will degrade the performance rather than enhancing it.
+
 
 
 
@@ -866,6 +887,7 @@ Quotas & Limitations : Clustered tables are subject to the limitations of partit
 
 
 
+
 * Load and Query External Data Sources in BigQuery :
 For querying and analysis, we don't always need the data in BigQuery. There are some situations, where we just need to query the data for some information 
 without loading it. Federated Queries are used to directly fire query on top of external data sources.
@@ -896,6 +918,7 @@ Limitations :
 5. External data sources supports table partitioning and clustering in a limited way.
 6. Results are not cached when querying an external data source.
 7. Limited to 4 concurrent queries against a Cloud BigTable external data source.
+
 
 
 
@@ -952,6 +975,7 @@ Limitations & Quotas -
 7. You also cannot Preview the data of a view since it doesnot have data on its own.
 8. Maximum number of nested view levels - 16. (Nested view is view created from another view)
 9. Maximum number of views in a dataset - 2500.
+
 
 
 
@@ -1056,6 +1080,7 @@ Limitations & Quotas -
 9. Materialized views cannot be nested on other materialized views.
 10. You can use only the standard SQL dialect for these views.
 11. A maximum of 20 Materialized views can be created per base table.
+
 
 
 
@@ -1175,6 +1200,7 @@ NOTE : The BigQuery flags can be used in another way by adding no at the beginin
 
 
 
+
 * Creating Dataset from BQ commands : 
 To create any entity using BigQuery command line, use mk command. "mk" stands for make. Any dataset, table, view, materialized view to be created can be 
 done using "mk" command. If you omit the flag, by default this command creates a dataset. You can directly provide dataset name after the "mk" command.
@@ -1191,6 +1217,7 @@ Few optional parameters while creating dataset :
 						  partition expiration.
 3. --description "<any_description>" - To provide description for the dataset created.
 4. --default_kms_key "<encryption_key>" - This is to provide the custom encryption key's resource id.
+
 
 
 
@@ -1247,6 +1274,7 @@ NOTE : When you provide a schema on command line, you cannot specify record_type
 
 
 
+
 * Loading data into table using command line :
 "load" command is used to load the data into an empty table. It needs the table_name to be loaded and it's schema.
 --> bq load <project_name:dataset_name.table_name> <path_of_the_file_that_needs_to_be_loaded> <schema>
@@ -1256,11 +1284,50 @@ flag (--autodetect) as well instead of supplying the schema.
 
 
 
+
 * Exclusive operations of BigQuery CLI : There are some oprerations which are not allowed from UI console and are only possible via CLI -
 1. Relaxing a column mode to NULLABLE - If a column in table has REQUIRED mode already set, then the mode can be changed to NULLABLE via CLI using the 
 					"schema_update_option" flag in query or load command. This option is useful when you append or overwrite data to
 					a table or partition. The value of this flag updated the mode of the column in the destination table. There can be
 					two values for this flag - ALLOW_FIELD_ADDITION & ALLOW_FIELD_RELAXATION.
 --> bq load --schema_update_option ALLOW_FIELD_RELAXATION <project_name:dataset_name.table_name> <path_of_the_file_to_be_uploaded> <schema>
+
+NOTE : If you try to load with few values as NULL without using the "schema_update_option" flag in the table which has REQUIRED mode in that particular 
+       column where we are trying to load with NULL values, then the command fails.
+
+2. Copying selected partitions of a table - The process for copying a partitioned table is the same for copying a standard table. To copy, we have "cp"
+					    command line with these many flags :
+					    a> --append_table or -a -> Copies a table or partition and append it to an existing table. Default - FALSE.
+					    b> --destination_kms_key -> The cloud KMS key used for encryption of the destination table data.
+					    c> --force or -f -> When specified and if the destination table exists, the copy data is overwritten in the
+								destination table. Default - FALSE.
+					    d> --no_clobber or -n -> This flag is to prevent accidental data copy. When specified and if the destination
+								     table exists, the copy data is not overwritten. Default - FALSE.
+
+* Few Operations :
+i> Copying partition to a new table :
+--> bq cp -a <SOURCE_project_name:dataset_name.partition_table_name$partition_name> <DEST_project_name:dataset_name.new_table_name>
+NOTE : "$" is a partition decorator.
+
+ii> Copying and appending a partition to an existing non-partitioned table :
+--> bq cp -a <SOURCE_project_name:dataset_name.partition_table_name$partition_name> <DEST_project_name:dataset_name.existing_non-partitioned_table_name>
+
+iii> Copying and appending a partition to another partitioned table :
+--> bq cp -a <SOURCE_project_name:dataset_name.partition_table_name$partition_name> <DEST_project_name:dataset_name.exsiting_partitioned_table_name>
+NOTE : Since partition is not provided in the destination table, it copies the data into a new partition. If partition was mentioned, then it would have
+       appended the data in the existing mentioned partition itself. Also if you wish to copy multiple partitions, then you need to provide all partitions
+       as comma separated.
+
+iv> Copying and overwritting a partition data into another partitioned table :
+--> bq cp -f <S_project_name:dataset_name.partition_table_name$partition_name> <D_project_name:dataset_name.exsiting_partitioned_table_name$partition_name>
+NOTE : A partition can be copied (appended or overwritten) into another partition of the same table as well.
+
+
+
+
+* Python Client Library for BigQuery :
+ 
+
+
 
 
