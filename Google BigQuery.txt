@@ -1326,3 +1326,4 @@ NOTE : A partition can be copied (appended or overwritten) into another partitio
 
 
 * Python Client Library for BigQuery :
+One line added for testing
