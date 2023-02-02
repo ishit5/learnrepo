@@ -1326,4 +1326,14 @@ NOTE : A partition can be copied (appended or overwritten) into another partitio
 
 
 * Python Client Library for BigQuery :
-One line added for testing
+As we know, in order to access BigQuery through an API, then we need to create a service account key. It acts as a connection and authentication key to
+the google cloud account. In order to create a service account key : 
+IAM and Admin --> Service Accounts --> Create Service Account --> Provide Name and Create --> provide Priviledges (O) --> provide User's Access (O) --> Done
+
+Your Service Account Key will be listed. From "Actions" --> "Create Key" (Key Type would be JSON). Once you click "CREATE", a JSON file will be downloaded
+This key needs to be kept secretly as this will be used to embed in the python code to get access to BigQuery via API.
+
+NOTE : The key should be kept in a very safe location as this key holds the single point of entry to the project. Anyone having this key will get access to
+	 the project with whatever priviledges that are set in the key.
+
+Now - to get python in our system, go to Python's official website and download from there.

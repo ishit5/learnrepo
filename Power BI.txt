@@ -1,10 +1,215 @@
-Power BI - It is a Business Intelligence tool which helps the End Users to get meaningful insigts of the data
+* Business Intelligence - It is an end to end process starting from extracting the data from different sources to transforming & loading the data into a 
+				specific format in order to build reports and dashboards which helps the clients to get insights of the business and take 
+				informed decisions.
+				Need --> Collect --> Analyze --> Visualize --> Decision
 
-It has 4 components :
+
+
+* Importance of BI - 
+1. Improves decision making
+2. Optimizing internal business process
+3. Increases operational efficiencies
+4. Better ROI (Return on investment)
+5. Helps gain competitive edge
+
+
+
+* Roles in Data :
+1. Business Analyst - One who knows the business itself and is expert in interpreting the data that comes from the visualization.
+2. Data Analyst - One who is responsible for profiling, cleaning and transforming the data which is basically the ETL process and designing & building 
+			the scalable performant data models and enabling & implementing the advanced analytics capabilities into the report.
+3. Data Engineer - They are the technical persons who are responsible for creating data pipelines which helps the different types of data (both structured
+			 and unstructured) to flow from different sources and combines to form a dataset of a particular format.
+4. Data Scientist - These are the guys who performs advanced analytics which are used to predict future values.
+5. Database Administrator - They are responsible for the overall availability and consistent performance and optimizations of the database solutions.
+
+
+
+* Power BI VS Tableau - 
+1. Calculation - Power BI has indepth calculation techniques which is DAX (Data Analysis Expressions)
+2. ETL Tool - Power BI has it's own ETL tool which is Power Query.
+3. Visuals - Advances visualizations are present and it keeps on growing.
+4. Cost - Cost is low as compared to other BI tools. Power BI Desktop (PBI Desktop) is free.
+
+
+
+* Power BI VS Excel -
+1. Power BI can store and analyse huge amount of data smoothly as compared to excel as it starts to hand as soon as the data becomes larger.
+2. A lot of advanced functions and formulas are present in Power BI which makes it way powerful than excel for finding data insights and trends.
+3. The interface is much smoother and user friendly as compared to excel.
+4. Sharing is much easier as the report gets refreshed real time whereas in excel, once the report is shared, you do not get any further refreshes until
+   the excel is shared again. It becomes a repetative way of sharing data and not easy to maintain the updates when working in a team.
+5. More secure than excel as the full data is shared when sharing in excel but in Power BI, RLS (Row Level Security) can be granted so that specific users
+   can see the records that are relevant to them.
+
+
+
+* Power BI - It is a Business Intelligence tool which helps the End Users to get meaningful insigts of the data.
+
+There are 3 Ways to use Power BI :
+1> PowerBI Desktop - For Report Developers (80% of work - Offline)
+2> PowerBI Service - For Report Developer & Consumer of the report (Cloud based application where you push the reports to share with others - Online)
+3> PowerBI Mobile - For Report Consumer (Once the report is published, the consumer can start seeing the reports directly from their mobile - Online)
+
+
+
+* Architecture - 
+There are two major components of Power BI :
+1. PBI Service (Cloud Based Program)
+2. PBI Desktop (Offline Program) 
+
+Approach 1> Data Sources (connect) ---------------------------------> Power BI Service (access) --> Consumers
+Approach 2> Data Sources (connect) --> Power BI Desktop (publish) --> Power BI Service (access) --> Consumers
+
+Approach 1 can be used to directly connect the source data to the PBI Service so that the data becomes immediately available to the consumers but there is
+one important limitations and that is it doesnot support the DAX functions and thus in-depth calculation and analysis is not possible and that's why 
+approach 2 is majorly used for creating reports and dashboards.
+
+Power BI gateways - These are there to automate the schedule refreshes of the source data so that the report is refreshed.
+
+
+
+* Components of Power BI :
+1. PBI Desktop - This is where the reports are developed.
+2. PBI Service - This is where the reports are published so that the end users can access them to get insights.
+3. PBI Mobile Apps - This is where consumers can see the reports in real time through their mobile phones as well.
+4. PBI Report Server - Many clients doenot want to publish the report in the public cloud and that's when this service is used. This is used to publish the
+			     report in the client's on-premise server or cloud.
+
+
+
+* PBI Flow - 
+Extract -> Transform -> Load -> Data Modeling -> DAX -> Report Building (Visualization) -> Publish Report -> Dashboard Creation -> Share & Collaborate
+|------ Power Query -------|    |-- Power Pivot ---|    |-------- Power View --------|
+|------------------------------- Power BI Desktop ------------------------------------|    |------------------ Power BI Service ---------------------|
+
+
+
+* Core Views of PBI Desktop -
+1. Report View - This is where the report is created by dragging and drawing the visualizations needed with respect to the data.
+2. Data View - This is where you can see the data that is loaded from external sources.
+3. Model View - Here we build the model, create relationship etc.
+
+
+
+* Setting options for the current file -
+There are two types of settings : "GLOBAL" & "CURRENT FILE"
+Steps : File --> Options & Settings --> Options
+Power BI is smart enough to establish the relationship between different tables. It creates the relationships automatically but for some scenarios you need
+to create by your own. Now, if you want to create relationships from scratch by your own, then you need to uncheck the option "Autodetect new relationships
+after data is loaded".
+
+
+
+* Components of PBI Desktop :
 1. Power Query - Used for ETL, Cleaning of the data before loading or after loading as well
 2. Power Pivot - Used for Modelling and Building relationships between different tables
 3. Power View - Used for creating visualizations and Dashboards
 4. Power BI Service - Used to publish and share the report with teams or different Users
+
+
+
+* Data Connectors :
+Home --> Get Data
+There are many connectors available in Power BI which are used to connect to different types of sources :
+ODataFeed - If you have an URL as part of the data source, then you can use the connector - ODataFeed (open datafeed)
+Connect to a Folder - This is used when you have similar files that are to be loaded in PBI Desktop as one single query. Also it becomes very much useful 
+			    when similar kinds of files are to be loaded in some frequency (say monthly). This helps avoiding manual intervention. 
+NOTE - If you connect a file and load it into PBI, then PBI makes the connection with the name of the file. Now, if the name is changed later, then PBI 
+	 will fail to load/update the file later as it will try to find the file with the name that was there while it was connected for the first time.
+	 With Folders, this problem will not occur as you have made connection to PBI with the folder name and thus even if the naming convention changes, 
+	 the file will be read as long as it resides insides the folder. When you load from a folder and if the folder has multiple files, it asks how to 
+	 load the data - If you combine and load, an extra column gets created with the name "Source.Name" which contains the name of the files as per the
+	 corresponding rows.
+
+
+
+* Power Query -
+This is the in-built tool which is used to do ETL. 
+All the data cleanup, identifying/correcting data types, transformation are done using this tool.
+This can be used by clicking on the "Transform Data" option present in "Home".
+Once you click it, Power Query Editor window opens up.
+
+One important feature about Power Query is that every action that you take on the loaded dataset is recorded as "applied steps". So, next time when the 
+data is refreshed, it applies all the recorded steps to the refreshed load data.
+There are 2 important tabs in Power Query Editor :
+i> Transform - This helps to transform the field values and replaces the old value with the transformed value.
+ii> Add Column - This also helps to transform the field values but instead of replacing, it keeps the transformed values into a New Column.
+
+NOTE - Most of the options are similar in "Transform" & "Add Column" tab of the Power Query Editor Window.
+	 Every file that you load is called a Query and in Power Query under Query Settings, you have the property option under which you can change the 
+	 query name as well. It is recommended to provide small names as while using functions, the query names are used if there is a need to access any
+	 column/field from the same query.
+
+
+
+* Difference between TRANSFORM and LOAD -
+Once the data is loaded by a connector, it gives three options : 
+i> Load - This loads the data directly into Power BI.
+ii> Transform Data - This opens the data in Power Query Editor window so that the data can be cleaned and transformed if needed (Highly Recommended).
+iii> Close - This closes the window without loading the data.
+
+NOTE : Power BI is smart enough to detect the data types properly but still if you see that data type is not detected properly, then you can change the 
+	 type manually by clicking on the left side of the field name whose type you want to change. Data Type detected are shown in the left side of the
+	 field name in Power Query Editor window.
+
+
+
+* Tables in DW -
+There are 2 types of tables in DataWarehousing environment :
+i> Dimension Table - These are generally master tables which has unique list of records and they store the details about the facts.
+ii> Fact Table - These are generally the transactional tables and they mostly have the numbers on which all the analysis are done.
+
+
+
+* Merge, Add and Remove columns :
+In order to add columns, you need to move to the "Add Column" tab of the Power Query Editor and then select option based on how you want the column to be
+created. To Merge columns, you need to select all the columns in sequence that you want to merge by pressing CTRL key and then select the "merge" option.
+Now, Adding a merged column is also possible - only thing is instead of selecting "merge" in the "Transform" tab of the Power Query Editor, you need to 
+select "merge" option from the "Add Column" tab of the Power Query Editor. In order to remove columns, just select the columns that you want to remove by
+pressing CTRL key (when selecting multiple columns) and then right click & select "Remove Columns".
+
+NOTE - All transformations that you do will have a step recorded under "applied steps" with a generic name. You can rename the steps so that you can
+	 understand the changes that you did in that step when looking at a very later point of time.
+
+
+
+* Sorting in Power Query :
+Sorting is quite easy in Power Query. If you want to sort the data based on any field, then select the field that you want to sort and then select the
+"sort" option present under Home tab. Once you do that, you will see that the data is sorted and there will be an arrow sign signifying the same. Now, 
+multi-level sorting is also possible and if you want to do that, then you need to select the next column on the basis of which you want to sort and then 
+select "sort" option. The 2nd field will also get an arrow signifying that the field is also sorted and in addition to that, since there are two columns
+on which the data is sorted, it marks levels with numbers like 1 & 2 in order to signify that the data is sorted on which columns based on level.
+
+NOTE - A step will get added as soon as you sort the data but if you want to revert the change and remove the sorting, then you just need to remove the 
+	 sorting step.
+
+
+
+* Merge and Append Queries :
+Append - Append means adding records which is same as union operation. Now, in order to append queries, you need to have atleast more than one query 
+	   loaded into Power Query and the number of columns & type of the column should match with each other. If everything matches, then click on 
+	   "Append Queries" option present under Home tab. Now, Append queries has two types - 
+	   i> Append Queries - This appends the other query/queries under the selected query.
+	   ii> Append Queries as New - This appends all the queries selected and creates a new query. You just need to select the queries that you want to 
+		 append and then place it to the right hand side. Now the sequence of appending can also be customised using the up and down key.
+Merge - Merge means adding field or columns which is same as join operation. Now, in order to merge, you need to have the query or table that has the 
+	  column that you want to bring in the existing query or table using the common field. If the table is present, then you need to select "Merge
+	  Queries" option present under Home tab. Now similar to what we have for Append, Merge can also be done in two ways which is merging in the same
+	  query or table and the other option is to merge one or more columns in the existing query but as a new query without changing the existing one.
+	  Once you click on Merge, a dialog box opens and you will see that the one in which you want to merge is already selected and it is asking you to
+	  select the other query/table that you want to merge and then you need to select the common column from both the queries/tables on the basis of 
+	  which you want to merge. Now, click - "OK". Once you click "OK", you will see that the full merged table link comes at the end with arrows pointing
+	  to two different sides. Click on that and it will give an option to select the column/columns that you want to merge from the merged table. There
+	  is a check box which asks if you want to use the original column name as prefix which means if you check that, it will add the query name along 
+	  with the column name (query_name.column_name) to signify that it is a merged column showing the table from which it is merged but if you don't 
+	  want that, then you can simply uncheck the option which will keep the original name of the column.
+
+Note - Data can be loaded directly from Power Query Editor window as well. Only difference is when you load it through Power BI, it asks if you want the 
+	 loaded data to open in Power Query for transformation or you directly want to load the data but through Power Query it only says that the data is 
+	 loaded. In both cases it shows sample data of top 200 rows.
+
+
 
 Charts :
 1. Column Chart - A Column Chart is a chart where data is presented vertically. (If you don't pass legend it will be a simple column chart)
